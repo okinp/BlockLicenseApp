@@ -108,8 +108,8 @@
         }
     }
     #account-list {
-        min-height: 380px;
-        max-height: 380px;
+        min-height: 472px;
+        max-height: 472px;
         overflow-y: auto;
         padding-top: 0;
         padding-bottom: 0px;

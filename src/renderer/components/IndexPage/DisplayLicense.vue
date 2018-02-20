@@ -2,27 +2,20 @@
     <div>
         <filename-banner :fileName="fileName"/>
         <close-bar @close="closeEmited"/>
-<!--
-        licenseObj.workDescription
-        licenseObj.licenseDescription
-        licenseObj.prices
--->
-        <v-container fluid id="info">
-            <v-layout row wrap>
-                <v-flex xs4>
-                    <p>Creator:</p>
-                    <p>E-mail:</p>
-                    <p>Title:</p>
-                    <p>License type:</p>
-                </v-flex>
-                <v-flex xs8 >
-                    <p>{{licenseObj.creator}}</p>
-                    <p>{{licenseObj.email}}</p>
-                    <p>{{licenseObj.workTitle?licenseObj.workTitle:'Untitled Work'}}</p>
-                    <p>{{ licenseObj.licenseType == 1 ? 'ClosedLicense' : 'OpenLicense' }}</p>
-                </v-flex>
-            </v-layout>
-        </v-container>
+        <div id="info2">
+            <div class="labels">
+                <p>Creator:</p>
+                <p>E-mail:</p>
+                <p>Title:</p>
+                <p>License type:</p>
+            </div>
+            <div class="data">
+                <p>{{licenseObj.creator}}</p>
+                <p>{{licenseObj.email}}</p>
+                <p>{{licenseObj.workTitle?licenseObj.workTitle:'Untitled Work'}}</p>
+                <p>{{ licenseObj.licenseType == 1 ? 'ClosedLicense' : 'OpenLicense' }}</p>
+            </div>
+        </div>
         <v-container fluid id="licensingOptions">
             <v-layout row wrap>
                 <v-flex xs12 id="licenseHeader">
@@ -95,6 +88,29 @@
     }
 </script>
 <style scoped lang="scss">
+
+    #info2 {
+        display: flex;
+        color: #666E7A;
+        background: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 24px;
+        .labels, .data {
+            dislay: flex;
+            flex-direction: column;
+        }
+        .labels {
+            width: 20%;
+        }
+        .data {
+            width: 80%;
+        }
+        p {
+            margin-bottom: 5px;
+        }
+    }
     #info {
         padding-top: 0;
         color: #666E7A;

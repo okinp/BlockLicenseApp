@@ -7,6 +7,9 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+var remote = require('electron').remote;
+var buildEditorContextMenu = remote.require('electron-editor-context-menu');
+
 Vue.use(Vuetify)
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
@@ -65,7 +68,19 @@ var EthTools = {
 EthTools.init();
 Vue.prototype.$EthTools = EthTools;
 
+window.addEventListener('contextmenu', function(e) {
+  // Only show the context menu in text editors.
+  if (!e.target.closest('textarea, input, [contenteditable="true"]')) return;
 
+  var menu = buildEditorContextMenu();
+
+  // The 'contextmenu' event is emitted after 'selectionchange' has fired but possibly before the
+  // visible selection has changed. Try to wait to show the menu until after that, otherwise the
+  // visible selection will update after the menu dismisses and look weird.
+  setTimeout(function() {
+    menu.popup(remote.getCurrentWindow());
+  }, 30);
+});
 
 
 

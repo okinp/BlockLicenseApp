@@ -40,7 +40,7 @@
   height: 148px;
  }
  #account-form {
-  height: 480px;
+  height: 492px;
   .container-fluid {
     flex-grow: 1;
   }

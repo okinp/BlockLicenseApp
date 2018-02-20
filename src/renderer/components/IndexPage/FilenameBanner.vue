@@ -1,15 +1,11 @@
 <template>
 <div class="banner">
-    <v-container fluid>
-            <v-layout row wrap>
-                <v-flex xs4>
-                    <p class="filename_label">Filename: </p>
-                </v-flex>
-                <v-flex xs8 >
-                    <p class="filename">{{name}}</p>
-                </v-flex>
-            </v-layout>
-    </v-container>
+    <div class="label">
+        <p>Filename:</p>
+    </div>
+    <div class="filename">
+        <p>{{name}}</p>
+    </div>
 </div>
 </template>
 <script>
@@ -26,24 +22,27 @@ export default {
 <style lang="scss" scoped>
     .banner {
         width: 100%;
+        height: 50px;
+        padding: 10px 24px;
         background: linear-gradient(to right, #301F66 , #316ECF);
         color: #fff;
-        line-height: 20px;
-        margin: 0;
-        > .container.fluid {
-            padding: 15px 30px 15px 30px;
+        font-size: 14px;
+        display: flex;
+        box-sizing: border-box;
+        .label {
+            color: rgba(255,255,255,0.5);
+            width: 20%;
+            display: flex; 
+        }
+        .filename {
+            width: 80%;
+            box-sizing: border-box;
+            display: flex;
+        }
+        p {
+            margin: 0;
+            line-height: 30px;
+            box-sizing: border-box;
         }
     }
-    .filename_label, .filename {
-        margin-bottom: 0;
-        font-size: 14px;
-    }
-    .filename_label {
-        color: rgba(255,255,255,0.5);
-    }
-/*
-    .filename {
-        
-    }
-*/
 </style>
