@@ -44,7 +44,7 @@
             editAccount: function(){
                 this.isEdit = true;
                 this.isHidden = false;
-                // this.showDialog = true;
+                this.showDialog = true;
             },
             submitForm: function(){
                 this.isHidden = true;

@@ -9,7 +9,6 @@ export default {
     methods: {
         emitClose: function(){
             this.$emit("close", true);
-            console.log("close pressed");
         }
     }
 }
