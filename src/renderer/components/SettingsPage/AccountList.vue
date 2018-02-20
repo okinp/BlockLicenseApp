@@ -9,6 +9,7 @@
         </div>
         <close-bar @close="closeEmited" v-if="!isHidden"/>
         <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component>
+        <account-dialog :shown="showDialog" @close="closeDialog"></account-dialog>
     </div>
 </template>
 <script>
@@ -16,9 +17,10 @@
     import NewAccount from './NewAccount'
     import EditAccount from './EditAccount'
     import CloseBar from '../Common/CloseBar'
+    import AccountDialog from './AccountDialog'
     export default {
         name: "account-list",
-        components: { Account, NewAccount, EditAccount, CloseBar },
+        components: { Account, NewAccount, EditAccount, CloseBar, AccountDialog },
         computed: {
             accounts: function(){
                 return this.$store.getters['Wallet/accounts'];
@@ -42,16 +44,21 @@
             editAccount: function(){
                 this.isEdit = true;
                 this.isHidden = false;
+                // this.showDialog = true;
             },
             submitForm: function(){
                 this.isHidden = true;
                 this.isEdit = false;
+            },
+            closeDialog: function(){
+                this.showDialog = false;
             }
         },
         data() {
             return {
                 isHidden: true,
-                isEdit: false
+                isEdit: false,
+                showDialog: false
             }
         }
     }

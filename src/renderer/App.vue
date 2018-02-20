@@ -20,33 +20,10 @@
           })
           .catch(err=>console.log(err.message));
       },
-      getBalanceBlt: function(idx){
-          let address = this.$EthTools.wallet[idx].address;
-          this.$EthTools.contracts.BlockLicenseCrowdsale.deployed().then((inst)=>{
-            return inst.token();
-          })
-          .then(tk=>{
-            let bltCoinInstance = this.$EthTools.contracts.TokenContract.at(tk);
-            return bltCoinInstance;
-          })
-          .then(coinInst => {
-            return coinInst.balanceOf(String(this.$EthTools.wallet[idx].address));
-          })
-          .then(balance => {
-            console.log(balance.toString(10));
-            var Web3 = require('web3');
-            let bltBalance = parseFloat(Web3.utils.fromWei(balance.toString(10))).toFixed(4);
-            this.$store.commit('Wallet/SET_BLT_BALANCE', { index: idx, balance: bltBalance });
-          })
-          .catch((err)=>{
-            console.log(err.message);
-          })
-      },
       getBalances: function(){
         for ( var i=0; i < this.$EthTools.wallet.length; i++)
         {
           this.getBalanceEth(i);
-          this.getBalanceBlt(i);
         }
       }
     },

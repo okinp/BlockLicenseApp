@@ -36,7 +36,21 @@ var EthTools = {
         EthTools.web3 = new Web3(EthTools.web3Provider);
     },
     initContracts: function(){
-
+        var w = this.web3;
+        var BlockLicenseCrowdsaleArtifact = require('../../build/contracts/BlockLicenseCrowdsale.json');
+        var BLTokenArtifact = require('../../build/contracts/BLToken.json');
+        var contract = require("truffle-contract");
+        let CrowdsaleContract = contract(BlockLicenseCrowdsaleArtifact);
+        CrowdsaleContract.setProvider(EthTools.web3Provider);  
+        if (typeof CrowdsaleContract.currentProvider.sendAsync !== "function") {
+            CrowdsaleContract.currentProvider.sendAsync = function() {
+                return CrowdsaleContract.currentProvider.send.apply(CrowdsaleContract.currentProvider, arguments);
+            };
+        }
+        let TokenContract = contract(BLTokenArtifact);
+        TokenContract.setProvider(EthTools.web3Provider);
+        EthTools.contracts.BlockLicenseCrowdsale = CrowdsaleContract;
+        EthTools.contracts.TokenContract = TokenContract;
     },
     initWallet: function(){
         EthTools.wallet = EthTools.web3.eth.accounts.wallet.create(0, EthTools.web3.utils.randomHex(20));
