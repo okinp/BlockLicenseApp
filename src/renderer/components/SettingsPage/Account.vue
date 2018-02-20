@@ -2,10 +2,10 @@
 <div class="account">
     <div class="name">
         <div class="edit-account">
-            <span>{{ accountData.name }}</span>
             <a href="#" @click="copyPublicKeyToClipboard" title="Copy public key">
                 <i class="fa fa-clipboard"></i>
             </a>
+            <span>{{ accountData.name }}</span>
         </div>
     </div>
     <div class="balance">

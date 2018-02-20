@@ -6,13 +6,7 @@
           Dialog 2
         </v-card-title>
         <v-card-text>
-
-      <!--         <v-btn color="primary" dark @click.stop="dialog3 = !dialog3">Open Dialog 3</v-btn>
-          <v-select
-            :items="select"
-            label="A Select List"
-            item-value="text"
-          ></v-select> -->
+          <component :is="dialogOption"></component>
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary" flat @click.stop="dialog2=false" v-on:click.native="closeDialog">Close</v-btn>
@@ -22,14 +16,15 @@
 </template>
 <script>
   import CloseBar from '../Common/CloseBar';
+  import ConfirmDelete from './ConfirmDelete';
   export default {
     name: "account-dialog",
-    components: { CloseBar },
-    props: ['shown'],
+    props: ['shown', 'dialogOption'],
+    components: { CloseBar, ConfirmDelete },
     methods: {
       closeDialog: function(){
         this.$emit("close", true);
       }
-    }
+    },
   }
 </script>

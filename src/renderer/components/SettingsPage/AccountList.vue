@@ -9,7 +9,7 @@
         </div>
         <close-bar @close="closeEmited" v-if="!isHidden"/>
         <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component>
-        <account-dialog :shown="showDialog" @close="closeDialog"></account-dialog>
+        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" @close="closeDialog"></account-dialog>
     </div>
 </template>
 <script>
@@ -31,6 +31,9 @@
             getComponent: function(){
 //                console.log(this.isEdit?'edit-account':'new-account');
                 return this.isEdit?'edit-account':'new-account'
+            },
+            getDialogOption: function(){
+                return this.actions[this.action];
             }
         },
         methods: {
@@ -58,7 +61,9 @@
             return {
                 isHidden: true,
                 isEdit: false,
-                showDialog: false
+                showDialog: false,
+                action: 0,
+                actions: ['confirm-delete']
             }
         }
     }

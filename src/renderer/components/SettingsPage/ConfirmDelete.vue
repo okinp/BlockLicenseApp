@@ -5,6 +5,6 @@
 </template>
 <script>
 export default {
-	name: 'confirm-delete';
+	name: 'confirm-delete',
 }
 </script>
