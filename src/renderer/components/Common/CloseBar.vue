@@ -1,6 +1,6 @@
 <template>
 <div class="closeBar">
-    <a id="cross" href="#" v-on:click="emitClose"><i class="material-icons icon-gray">clear</i></a>
+    <a id="cross" href="#" v-on:click="emitClose" title="Close"><i class="material-icons icon-gray">clear</i></a>
 </div>
 </template>
 <script>

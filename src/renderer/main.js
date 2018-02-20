@@ -31,7 +31,8 @@ var EthTools = {
     init: function(){
       EthTools.initWeb3();
       EthTools.initWallet();
-      // EthTools.initContracts();
+      EthTools.initContracts();
+      EthTools.getEthUsdValue();
     },
     initWeb3: function(){
         var Web3 = require('web3');
@@ -39,21 +40,21 @@ var EthTools = {
         EthTools.web3 = new Web3(EthTools.web3Provider);
     },
     initContracts: function(){
-        var w = this.web3;
-        var BlockLicenseCrowdsaleArtifact = require('../../build/contracts/BlockLicenseCrowdsale.json');
-        var BLTokenArtifact = require('../../build/contracts/BLToken.json');
-        var contract = require("truffle-contract");
-        let CrowdsaleContract = contract(BlockLicenseCrowdsaleArtifact);
-        CrowdsaleContract.setProvider(EthTools.web3Provider);  
-        if (typeof CrowdsaleContract.currentProvider.sendAsync !== "function") {
-            CrowdsaleContract.currentProvider.sendAsync = function() {
-                return CrowdsaleContract.currentProvider.send.apply(CrowdsaleContract.currentProvider, arguments);
-            };
-        }
-        let TokenContract = contract(BLTokenArtifact);
-        TokenContract.setProvider(EthTools.web3Provider);
-        EthTools.contracts.BlockLicenseCrowdsale = CrowdsaleContract;
-        EthTools.contracts.TokenContract = TokenContract;
+        // var w = this.web3;
+        // var BlockLicenseCrowdsaleArtifact = require('../../build/contracts/BlockLicenseCrowdsale.json');
+        // var BLTokenArtifact = require('../../build/contracts/BLToken.json');
+        // var contract = require("truffle-contract");
+        // let CrowdsaleContract = contract(BlockLicenseCrowdsaleArtifact);
+        // CrowdsaleContract.setProvider(EthTools.web3Provider);  
+        // if (typeof CrowdsaleContract.currentProvider.sendAsync !== "function") {
+        //     CrowdsaleContract.currentProvider.sendAsync = function() {
+        //         return CrowdsaleContract.currentProvider.send.apply(CrowdsaleContract.currentProvider, arguments);
+        //     };
+        // }
+        // let TokenContract = contract(BLTokenArtifact);
+        // TokenContract.setProvider(EthTools.web3Provider);
+        // EthTools.contracts.BlockLicenseCrowdsale = CrowdsaleContract;
+        // EthTools.contracts.TokenContract = TokenContract;
     },
     initWallet: function(){
         EthTools.wallet = EthTools.web3.eth.accounts.wallet.create(0, EthTools.web3.utils.randomHex(20));
@@ -62,6 +63,17 @@ var EthTools = {
         for (var i=0; i<sz; i++){
             EthTools.wallet.add(accts[i]);
         }
+    },
+    getEthUsdValue: function(){
+        let axios = require('axios');
+        axios.get('https://api.coinmarketcap.com/v1/ticker/?limit=5')
+        .then(function (response) {
+        	let price_usd = response.data[1].price_usd;
+        	EthTools.price_usd = price_usd;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
 }
 

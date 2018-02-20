@@ -22,7 +22,7 @@ export default {
 <style lang="scss" scoped>
     .banner {
         width: 100%;
-        height: 50px;
+        height: 40px;
         padding: 10px 24px;
         background: linear-gradient(to right, #301F66 , #316ECF);
         color: #fff;
@@ -41,7 +41,7 @@ export default {
         }
         p {
             margin: 0;
-            line-height: 30px;
+            line-height: 20px;
             box-sizing: border-box;
         }
     }

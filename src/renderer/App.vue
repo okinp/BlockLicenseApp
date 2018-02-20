@@ -25,13 +25,13 @@
         {
           this.getBalanceEth(i);
         }
-      }
+      },
     },
     mounted: function(){
         this.getBalances();
         setInterval(function () {
           this.getBalances();
-        }.bind(this), 15000); 
+        }.bind(this), 15000);
     }
   };
   document.addEventListener('dragover', function (event) {
