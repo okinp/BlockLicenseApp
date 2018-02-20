@@ -1,15 +1,16 @@
 <template>
     <div class="accounts">
         <h1 class="text-center">Accounts</h1>
-        <div id="account-list">   
-            <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
-        </div>
         <div class="text-right" id="add-account" v-bind:class="{ hidden: !isHidden }">
-            <a href="#" v-on:click="show">+ ADD ACCOUNT</a>
+            <a href="#" v-on:click="newAccount">+ ADD ACCOUNT</a>
         </div>
+        <div id="account-list">   
+            <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
+        </div>
+
         <close-bar @close="closeEmited" v-if="!isHidden"/>
         <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component>
-        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" @close="closeDialog"></account-dialog>
+        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
     </div>
 </template>
 <script>
@@ -41,6 +42,10 @@
                 this.isHidden = true;
                 this.isEdit = false;
             },
+            newAccount: function(){
+                this.action = 1;
+                this.showDialog = true;
+            },
             show: function(){
               this.isHidden = false  
             },
@@ -49,12 +54,22 @@
                 this.isHidden = false;
                 this.showDialog = true;
             },
+            deleteAccount: function(){
+                this.action = 0;
+                this.showDialog = true;
+            },
             submitForm: function(){
                 this.isHidden = true;
                 this.isEdit = false;
             },
-            closeDialog: function(){
+            cancelDialog: function(){
                 this.showDialog = false;
+            },
+            acceptDelete: function(){
+                this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
+            },
+            setAccountIndex: function(idx){
+                this.accountIndex = idx;
             }
         },
         data() {
@@ -63,7 +78,8 @@
                 isEdit: false,
                 showDialog: false,
                 action: 0,
-                actions: ['confirm-delete']
+                actions: ['confirm-delete-dialog', 'new-account-dialog','edit-account-dialog'],
+                accountIndex: null
             }
         }
     }
@@ -73,17 +89,22 @@
 .accounts {
     #add-account {
         width: 100%;
-        padding-top: 16px;
-        padding-right: 24px;
+        height: 60px;
         font-size: 14px;
         font-weight: 500;
         text-align: left;
         color: #BFC6D0;
+        display: flex;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        padding-right: 24px;
+        justify-content: flex-end;
         a {
             text-decoration: none;
             cursor: pointer;
             float: right;
+            display:block;
+            height: 100%;
+            line-height: 60px;
         }
     }
     #account-list {

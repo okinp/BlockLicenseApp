@@ -129,7 +129,10 @@ export default {
             this.$emit("editAccount", true);
         },
         deleteAccount: function(){
-            this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
+            this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
+            //this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
+            this.$emit("deleteAccount", true);
+            this.$emit("accountIndex", this.accountIndex);
         },
         makePrimary: function(){
             this.$store.commit('Wallet/SET_PRIMARY_ACCOUNT', this.accountIndex);
