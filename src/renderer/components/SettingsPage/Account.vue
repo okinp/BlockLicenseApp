@@ -107,7 +107,7 @@
             flex-direction: column;
             a {
                 height: 50%;
-                font-size: 28px;
+                font-size: 14px;
                 i {
                     float: right;
                     color: #d6dde4;
@@ -125,11 +125,11 @@ export default {
     props: ['accountData', 'accountIndex'],
     methods: {
         editAccount: function () {
-            this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
             this.$emit("editAccount", true);
+            this.$emit("accountIndex", this.accountIndex);
         },
         deleteAccount: function(){
-            this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
+            //this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
             //this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
             this.$emit("deleteAccount", true);
             this.$emit("accountIndex", this.accountIndex);

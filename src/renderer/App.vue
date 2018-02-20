@@ -103,4 +103,11 @@
     flex-direction: column;
     align-items: stretch;
   }
+  .app-btn {
+    background-color: #3857b9 !important;
+    color: white !important;
+  }
+  .cancel-btn {
+    color: #3857b9 !important;
+  }
 </style>

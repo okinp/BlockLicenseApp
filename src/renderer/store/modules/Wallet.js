@@ -38,6 +38,11 @@ const mutations = {
           state.accounts[idx].name = name; 
       }
   },
+  SET_ACCOUNT_NAME_AT_INDEX: function(state, data){
+      if ( state.accounts[data.index] !== void 0 ){
+          state.accounts[data.index].name = data.name; 
+      }
+  },
   ADD_ACCOUNT: function(state, w){
 //      console.log(w)
       var newAccount = {name: w.name, balance: { eth: 0, blt: 0}, primary: false, edit: false, accountObject: w.accountObject };
@@ -93,6 +98,12 @@ const getters = {
     },
     isUpdate: state => {
         return state.isUpdateNotAdd;
+    },
+    accountAtIndex: function(state){
+      let accounts = state.account;
+      return function(idx){
+        return accounts[idx];  
+      }
     }
 }
 

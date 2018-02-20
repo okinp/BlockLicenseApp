@@ -13,19 +13,23 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .closeBar {
-        width: 100%;
+<style lang="scss" scoped>
+.closeBar {
+    width: 100%;
+    height: 31px;
+    box-sizing: border-box;
+    padding: 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    > a {
+        display: inline-block;
         height: 15px;
-        margin-bottom: 0;
+        width: 15px;
+        line-height:15px;
+        i.icon-gray {
+            color: #BFC6D0;
+            font-size: 15px;
+        }
     }
-    .closeBar > a {
-        float: right;
-        margin-top: 5px;
-        margin-right: 8px;
-    }
-    i.icon-gray {
-        color: #BFC6D0;
-        font-size: 15px;
-    }
+}
 </style>

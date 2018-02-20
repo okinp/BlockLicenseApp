@@ -6,10 +6,10 @@
                 <h1>Delete Account?</h1>
             </v-flex>
             <v-flex xs12 class="text-center">
-                <v-btn flat id="app-btn" v-on:click="confirmDelete">Delete</v-btn>
+                <v-btn flat class="app-btn" v-on:click="confirmDelete">Delete</v-btn>
             </v-flex>
         	<v-flex xs12 class="text-center">
-            	<v-btn flat color="indigo" v-on:click="cancelDialog">Cancel</v-btn>
+            	<v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
       		</v-flex>
 
         </v-layout>
@@ -30,3 +30,12 @@ export default {
     },
 }
 </script>
+<style lang="scss" scoped>
+	.app-btn {
+		background-color: #3857b9 !important;
+		color: white;
+	}
+	.cancel-btn {
+		color: #3857b9 !important;
+	}
+</style>

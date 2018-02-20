@@ -1,16 +1,15 @@
 <template>
     <div class="accounts">
         <h1 class="text-center">Accounts</h1>
-        <div class="text-right" id="add-account" v-bind:class="{ hidden: !isHidden }">
-            <a href="#" v-on:click="newAccount">+ ADD ACCOUNT</a>
-        </div>
         <div id="account-list">   
             <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
         </div>
-
-        <close-bar @close="closeEmited" v-if="!isHidden"/>
-        <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component>
-        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
+        <div class="text-right" id="add-account" v-bind:class="{ hidden: !isHidden }">
+            <a href="#" v-on:click="newAccount">+ ADD ACCOUNT</a>
+        </div>
+        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
+<!--         <close-bar @close="closeEmited" v-if="!isHidden"/>
+        <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component> -->
     </div>
 </template>
 <script>
@@ -50,8 +49,8 @@
               this.isHidden = false  
             },
             editAccount: function(){
+                this.action = 2;
                 this.isEdit = true;
-                this.isHidden = false;
                 this.showDialog = true;
             },
             deleteAccount: function(){
@@ -69,6 +68,7 @@
                 this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
             },
             setAccountIndex: function(idx){
+                console.log("Account Index is: " + idx)
                 this.accountIndex = idx;
             }
         },
@@ -93,7 +93,6 @@
         font-size: 14px;
         font-weight: 500;
         text-align: left;
-        color: #BFC6D0;
         display: flex;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         padding-right: 24px;
@@ -105,11 +104,12 @@
             display:block;
             height: 100%;
             line-height: 60px;
+            color: #b8bbc0;
         }
     }
     #account-list {
-        min-height: 725px;
-        max-height: 725px;
+        min-height: 380px;
+        max-height: 380px;
         overflow-y: auto;
         padding-top: 0;
         padding-bottom: 0px;
