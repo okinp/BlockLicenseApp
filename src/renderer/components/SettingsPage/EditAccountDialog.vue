@@ -1,29 +1,30 @@
 <template>
 <div>
-    <v-form v-model="valid" ref="form">
-        <v-container fluid id="account-list">
-            <v-layout row wrap>
-                <v-flex xs12 class="text-center">
-                    <h1>Edit Account</h1>
-                </v-flex>
-                <v-flex xs12>
-                 <v-text-field label="Name" v-model="name" :rules="[rules.validateName]">
-                 </v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                    <v-text-field label="Public Key" v-model="publicKey" disabled></v-text-field>
-                </v-flex>
-            </v-layout>
-            <v-layout row wrap>
+  <close-bar @close="cancelDialog"></close-bar>
+  <v-form v-model="valid" ref="editAccountForm">
+      <v-container fluid id="account-list">
+          <v-layout row wrap>
               <v-flex xs12 class="text-center">
-                  <v-btn flat class="app-btn" v-on:click="updateAccount" v-bind:class="{ 'btn--disabled': !valid}">Update</v-btn>
+                  <h1>Edit Account</h1>
               </v-flex>
-              <v-flex xs12 class="text-center">
-                  <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
+              <v-flex xs12>
+               <v-text-field label="Name" v-model="name" :rules="[rules.validateName]">
+               </v-text-field>
               </v-flex>
-            </v-layout>
-        </v-container>
-    </v-form>
+              <v-flex xs12>
+                  <v-text-field label="Public Key" v-model="publicKey" disabled></v-text-field>
+              </v-flex>
+          </v-layout>
+          <v-layout row wrap>
+            <v-flex xs12 class="text-center">
+                <v-btn flat class="app-btn" v-on:click="updateAccount" v-bind:class="{ 'btn--disabled': !valid}">Update</v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-center">
+                <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
+            </v-flex>
+          </v-layout>
+      </v-container>
+  </v-form>
 </div>
 </template>
 <style lang="scss" scoped>
@@ -45,16 +46,22 @@
   }
 </style>
 <script>
+import CloseBar from '../Common/CloseBar';
 export default {
 	name: 'edit-account-dialog',
-  props: ['accountIndex', 'showDialog'],
+  props: ['accountIndex', 'showDialog' ],
+  components: { CloseBar },
   methods: {
     updateAccount: function(){
       this.$store.commit('Wallet/SET_ACCOUNT_NAME_AT_INDEX', { name: this.$data.name, index: this.accountIndex});
       this.$emit("cancel", true);
     },
     cancelDialog: function(){
+      this.resetDialog();
       this.$emit("cancel", true);
+    },
+    resetDialog: function(){
+      this.$refs.editAccountForm.reset();
     },
   },
   data: function(){

@@ -44,7 +44,6 @@ const mutations = {
       }
   },
   ADD_ACCOUNT: function(state, w){
-//      console.log(w)
       var newAccount = {name: w.name, balance: { eth: 0, blt: 0}, primary: false, edit: false, accountObject: w.accountObject };
       if (!state.accounts.length )
           newAccount.primary = true;
@@ -58,14 +57,11 @@ const mutations = {
     {
       state.accounts[0].primary = true;
     } 
-
   },
   SET_ETH_BALANCE: function(state, data){
-      console.log(data);
       state.accounts[data.index].balance.eth = data.balance;
   },
   SET_BLT_BALANCE: function(state, data){
-      console.log(data);
       state.accounts[data.index].balance.blt = data.balance;
   }
 }

@@ -7,18 +7,15 @@
         <div id="account-list">   
             <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
         </div>
-        <account-dialog :shown="showDialog" :dialogOption="getDialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
+        <account-dialog :shown="showDialog" :resetForm="resetForm" :dialogOption="getDialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
     </div>
 </template>
 <script>
     import Account from './Account'
-    import NewAccount from './NewAccount'
-    import EditAccount from './EditAccount'
-    import CloseBar from '../Common/CloseBar'
     import AccountDialog from './AccountDialog'
     export default {
         name: "account-list",
-        components: { Account, NewAccount, EditAccount, CloseBar, AccountDialog },
+        components: { Account, AccountDialog },
         computed: {
             accounts: function(){
                 return this.$store.getters['Wallet/accounts'];
@@ -41,6 +38,7 @@
             },
             newAccount: function(){
                 this.action = 1;
+                this.resetForm = false;
                 this.showDialog = true;
             },
             show: function(){
@@ -49,6 +47,7 @@
             editAccount: function(){
                 this.action = 2;
                 this.isEdit = true;
+                this.resetForm = false;
                 this.showDialog = true;
             },
             deleteAccount: function(){
@@ -61,6 +60,7 @@
             },
             cancelDialog: function(){
                 this.showDialog = false;
+                this.resetForm = true;
             },
             acceptDelete: function(){
                 this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
@@ -75,6 +75,7 @@
                 isHidden: true,
                 isEdit: false,
                 showDialog: false,
+                resetForm: false,
                 action: 0,
                 actions: ['confirm-delete-dialog', 'new-account-dialog','edit-account-dialog'],
                 accountIndex: null

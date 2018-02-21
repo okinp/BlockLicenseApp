@@ -1,38 +1,39 @@
 <template>
 <div>
-        <v-form v-model="valid" ref="newAccountForm" id="account-form">
-            <v-container fluid >
-                <v-layout row wrap>
-                    <v-flex xs12 class="text-center">
-                        <h1>New Account</h1>
-                    </v-flex>
-                    <v-flex xs5>
-                        <v-radio-group v-model="autoKey" row :mandatory="true">
-                            <v-radio label="Auto Key" value='1' ></v-radio>
-                            <v-radio label="Manual Key" value='0'></v-radio>
-                        </v-radio-group>
-                    </v-flex>
-                </v-layout>
-                <v-layout row wrap class="middle-content">
-                      <v-flex xs12>
-                       <v-text-field label="Name" v-model="name" :rules="[rules.validateName]">
-                       </v-text-field>
-                      </v-flex>
-                      <v-flex xs12 v-if="autoKey=='0'">
-                       <v-text-field label="Private Key" v-model="privateKey" :rules="[rules.validatePrivateKey]">
-                       </v-text-field>
-                      </v-flex>
-                </v-layout>
-                <v-layout row wrap>
-                  <v-flex xs12 class="text-center">
-                      <v-btn flat class="app-btn" v-on:click="addAccount" v-bind:class="{ 'btn--disabled': !valid}">Add Account</v-btn>
-                  </v-flex>
-                  <v-flex xs12 class="text-center">
-                      <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
-                  </v-flex>
-                </v-layout>
-            </v-container>
-        </v-form>
+  <close-bar @close="cancelDialog"></close-bar>
+  <v-form v-model="valid" ref="newAccountForm" id="account-form">
+      <v-container fluid >
+          <v-layout row wrap>
+              <v-flex xs12 class="text-center">
+                  <h1>New Account</h1>
+              </v-flex>
+              <v-flex xs5>
+                  <v-radio-group v-model="autoKey" row :mandatory="true">
+                      <v-radio label="Auto Key" value='1' ></v-radio>
+                      <v-radio label="Manual Key" value='0'></v-radio>
+                  </v-radio-group>
+              </v-flex>
+          </v-layout>
+          <v-layout row wrap class="middle-content">
+                <v-flex xs12>
+                 <v-text-field label="Name" v-model="name" :rules="[rules.validateName]">
+                 </v-text-field>
+                </v-flex>
+                <v-flex xs12 v-if="autoKey=='0'">
+                 <v-text-field label="Private Key" v-model="privateKey" :rules="[rules.validatePrivateKey]">
+                 </v-text-field>
+                </v-flex>
+          </v-layout>
+          <v-layout row wrap>
+            <v-flex xs12 class="text-center">
+                <v-btn flat class="app-btn" v-on:click="addAccount" v-bind:class="{ 'btn--disabled': !valid}">Add Account</v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-center">
+                <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
+            </v-flex>
+          </v-layout>
+      </v-container>
+  </v-form>
 </div>
 </template>
 <style lang="scss" scoped>
@@ -61,18 +62,19 @@
   }
 </style>
 <script>
+import CloseBar from '../Common/CloseBar';
 export default {
 	name: 'new-account-dialog',
+  components: { CloseBar },
 	methods: {
       reset: function(){
         this.$refs.newAccountForm.reset();
       },
       resetDialog: function(){
+        this.$refs.newAccountForm.reset();
         this.name=null;
         this.privateKey=null;
         this.autoKey = '1';
-        this.$refs.newAccountForm.reset();
-
       },
       cancelDialog: function(){
         this.resetDialog();
@@ -89,7 +91,7 @@ export default {
           var w = { name: this.name, accountObject: account };
           this.$store.commit('Wallet/ADD_ACCOUNT', w);
           this.$EthTools.wallet.add(account);
-          this.$emit("formSubmitted", true);
+          // this.$emit("formSubmitted", true);
           this.resetDialog();
           this.$emit("cancel", true);
       }
