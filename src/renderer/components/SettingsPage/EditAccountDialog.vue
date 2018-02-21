@@ -57,7 +57,7 @@ export default {
       this.$emit("cancel", true);
     },
     cancelDialog: function(){
-      this.resetDialog();
+      //this.resetDialog();
       this.$emit("cancel", true);
     },
     resetDialog: function(){
@@ -94,6 +94,10 @@ export default {
   },
   watch: { 
     accountIndex: function(newVal, oldVal) { // watch it
+      //console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+      this.updateData();
+    },
+    showDialog: function(newVal, oldVal) { // watch it
       //console.log('Prop changed: ', newVal, ' | was: ', oldVal)
       this.updateData();
     }

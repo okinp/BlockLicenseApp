@@ -66,7 +66,6 @@
                 this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
             },
             setAccountIndex: function(idx){
-                console.log("Account Index is: " + idx)
                 this.accountIndex = idx;
             }
         },
