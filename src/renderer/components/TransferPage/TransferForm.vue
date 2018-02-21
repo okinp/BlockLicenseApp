@@ -1,105 +1,115 @@
 <template>
-    <div>
+    <div class="transferForm">
+        <v-form v-model="valid" ref="form" id="account-form">
         <v-container fluid>
             <v-layout row wrap>
                 <v-flex xs12 class="text-center">
                     <h1>Transfer</h1>
                 </v-flex>
-                <v-flex xs6 id="amount">
-                     <v-text-field name="input-1" label="Amount" id="testing1" v-model="amount">
+                <v-flex xs9 id="amount">
+                     <v-text-field name="input-1" label="Amount" id="testing1" v-model="value" :rules="[rules.validateNumber, rules.validateBalance]">
                      </v-text-field>
                 </v-flex>
-                <v-flex xs6 id="currency">
+                <v-flex xs3 id="currency">
                   <p>ETH</p>
                 </v-flex>
                 <v-flex xs12>
-                    <v-text-field name="input-1" label="Recipient Account" id="testing" v-model="recipientAccount"></v-text-field>
+                    <v-text-field name="input-1" label="Recipient Account" id="testing" v-model="publicKey" :rules="[rules.validatePublicKey]"></v-text-field>
                 </v-flex>
-                <v-flex xs-12 class="text-center">
-                    <v-btn class="app-btn" v-on:click="performTransfer" flat>TRANSFER</v-btn>
+                <v-flex xs-12 class="text-center transferButton">
+                    <v-btn class="app-btn" v-on:click="showConfirmationDialog" flat v-bind:class="{ 'btn--disabled': !valid}">TRANSFER</v-btn>
                 </v-flex>
             </v-layout>
-        </v-container>
+        </v-container v-model>
+        </v-form>
+        <transfer-dialog  :shown="showDialog" :value="value" :address="publicKey"  @cancel="cancelDialog" @transfer="performTransfer"></transfer-dialog>
   </div>
 </template>
 <script>
+import TransferDialog from './TransferDialog';
 export default {
   name: 'transfer-form',
   props: ['selectedIndex'],
-  data: () => ({
-      currencies: [
-          { text: 'BLT', value: 0 },
-          { text: 'ETH', value: 1 }
-      ],
-      currentCurrency: 1,
-      recipientAccount: null,
-      amount: null
-  }),
-  methods: {
-      performTransfer: function(){ 
-        console.log('Index is: ' + this.selectedIndex);
-        if ( this.currentCurrency === 1 ){
-          this.$EthTools.web3.eth.sendTransaction({ from: this.selectedIndex,
-                                           to: this.recipientAccount,
-                                           gas: 4712388,
-                                           value: this.$EthTools.web3.utils.toWei(String(this.amount))
-                                         })
-          .then(function(receipt){
-              console.log(receipt);
-          })
-          .then(function(){
+  components: { TransferDialog },
+    data: function(){
+        return {
+            publicKey: '',
+            value: null,
+            valid: false,
+            showDialog: false,
+            rules: {
+                validateBalance: function(value)
+                {
 
-          })
-          .catch((err)=>{
-            console.log("Catched Error");
-            console.log(err.message);
-          })          
-        } else if ( this.currentCurrency === 0 )
-        {
-          let fromAddress = String(this.$EthTools.wallet[this.selectedIndex].address);
-          let amount = this.$EthTools.web3.utils.toWei(String(this.amount));
-          this.$EthTools.contracts.BlockLicenseCrowdsale.deployed().then((inst)=>{
-            return inst.transfer(this.recipientAccount, amount, {from: fromAddress, gas: 30000 })
-          })
-          .then((result) => {
-            console.log(result);
-          })
-          .catch(function(e) {
-            console.log(e);
-          })
-          // let fromAddress = String(this.$EthTools.wallet[this.selectedIndex].address);
-          // let amount = String(this.amount);
-          // this.$EthTools.contracts.BlockLicenseCrowdsale.deployed().then((inst)=>{
-          //   return inst.token();
-          // })
-          // .then(tk=>{
-          //   let bltCoinInstance = this.$EthTools.contracts.TokenContract.at(tk);
-          //   return bltCoinInstance;
-          // })
-          // .then(coinInst => {
-          //   console.log("----FromAddresses-----" + fromAddress);
-          //   console.log("------Amount-------" + amount);
-          //   coinInst.balanceOf(fromAddress).then(bal=>console.log('f-ing balance: ' + bal));
-          //   return coinInst.transfer(this.recipientAccount, String('5000000000000000000'), {from: fromAddress, gas: 30000 })})
-          // .then(function(result) {
-          //   // If this callback is called, the transaction was successfully processed.
-          //   if( result ){
-          //   alert("Transaction successful!")              
-          // }
-          //   console.log(result);
-          // }).catch(function(e) {
-          //   // There was an error! Handle it.
-          //   console.log(e);
-          // })
-        } else {
-          console.log('Error in selected Index');
+                },
+                validateValue: function(value){
+                    return !isNaN(value) ? true : 'Enter numerical value';
+                },
+                validatePublicKey: function(value){
+                    if (value== null )
+                    {
+                      return true;
+                    }
+                    const ethUtil = require('ethereumjs-util');
+                    var isValid = false;
+                    try {
+                        isValid = ethUtil.isValidAddress(value);
+                    }
+                    catch(err) {
+                        isValid = false;
+                    }
+                    return isValid? true:'Invalid Address'
+                }
+            }
         }
-        this.recipientAccount = this.amount = null;
-      }
+    },
+  methods: {
+    performTransfer: function(){ 
+      console.log('Index is: ' + this.selectedIndex);
+      this.$EthTools.web3.eth.sendTransaction({ from: this.selectedIndex,
+                                       to: this.publicKey,
+                                       gas: 22000,
+                                       value: this.$EthTools.web3.utils.toWei(String(this.value))
+                                     })
+      .then(function(receipt){
+          console.log(receipt);
+      })
+      .then(()=>{
+        this.publicKey = this.value = null;
+      })
+      .catch((err)=>{
+        console.log("Catched Error");
+        console.log(err.message);
+      })
+    },
+    cancelDialog: function(){
+      this.showDialog = false;
+      this.publicKey = null;
+      this.value = null;
+      this.valid = false;
+    },
+    showConfirmationDialog: function(){
+      this.showDialog = true;
+    } 
   }
 }
 </script>
 <style lang="scss">
+    .transferForm {
+      width: 100%;
+      height: 400px;
+      display: flex;
+      flex-grow: 1;
+      justify-content: center;
+      align-items: center;
+    }
+    .transferButton {
+      padding-top: 40px;
+    }
+    #account-form {
+      width: 80%;
+      height: 621px
+    }
     .text-center > h1 {
         letter-spacing: normal;
     }
@@ -108,10 +118,13 @@ export default {
     }
     #currency {
         padding-left: 12px;
-        .input-group__selections__comma {
-            font-size: 14px;
-        }
+        font-weight: 500;
+        font-size: 16px;
         align-items: center;
+        line-height: 69px;
+        color: #8F949D;
+        display: flex;
+        justify-content: flex-end;
     }
     .layout .app-btn {
         background-color: #3857B9 !important;

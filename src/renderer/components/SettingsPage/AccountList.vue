@@ -1,15 +1,13 @@
 <template>
     <div class="accounts">
         <h1 class="text-center">Accounts</h1>
-        <div id="account-list">   
-            <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
-        </div>
         <div class="text-right" id="add-account" v-bind:class="{ hidden: !isHidden }">
             <a href="#" v-on:click="newAccount">+ ADD ACCOUNT</a>
         </div>
+        <div id="account-list">   
+            <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
+        </div>
         <account-dialog :shown="showDialog" :dialogOption="getDialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
-<!--         <close-bar @close="closeEmited" v-if="!isHidden"/>
-        <component :is="getComponent"  @formSubmitted="submitForm" v-if="!isHidden"></component> -->
     </div>
 </template>
 <script>
@@ -108,8 +106,8 @@
         }
     }
     #account-list {
-        min-height: 472px;
-        max-height: 472px;
+        min-height: 644px;
+        max-height: 644px;
         overflow-y: auto;
         padding-top: 0;
         padding-bottom: 0px;

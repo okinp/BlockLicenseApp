@@ -36,6 +36,12 @@
 </div>
 </template>
 <style lang="scss" scoped>
+
+  input-group--active {
+    .input-group--selection-controls__ripple::before {
+      background-color: red;
+    }
+  }
  .middle-content {
   height: 148px;
  }
@@ -81,9 +87,6 @@ export default {
           this.resetDialog();
           this.$emit("cancel", true);
       }
-    },
-    computed: {
-
     },
     data: function(){
         return {

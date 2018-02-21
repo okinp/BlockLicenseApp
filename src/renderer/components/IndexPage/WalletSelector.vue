@@ -54,6 +54,20 @@
  }
 </script>
 <style lang="scss">
+
+  .card {
+    ul.list {
+      background-color: #EEF2F6;
+      .list__tile__title {
+        color: dimgray;
+      }
+      .list__tile--active {
+        .list__tile__title {
+          color: #3857B9 !important;
+        }
+      }
+    }
+  }
   .infobar {
     width: 100%;
     height: 64px;

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="main-content">
 		<wallet-selector @selectedAccount="setSelectedAccount"/>
         <component :is="getComponent" :selectedIndex="selectedIndex"></component>
     </div>
@@ -10,6 +10,13 @@
 		width: 100%;
 		top: 70px;
 	}
+    .main-content { 
+        width: 100%;
+/*        height: 100%;*/
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+     }
 </style>
 <script>
     import WalletSelector from './IndexPage/WalletSelector'

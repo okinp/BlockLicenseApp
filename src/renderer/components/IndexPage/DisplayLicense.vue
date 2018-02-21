@@ -35,7 +35,7 @@
                     <p><span class="amount">{{price.value}}ETH</span><span class="amountDollars"> - ABOUT ${{price.value*ethInDollars}}</span></p>
                 </div>
                 <div class="buy">
-                    <v-btn class="app-btn buy" v-on:click.native="alert(price.idx)" flat>BUY LICENSE</v-btn>
+                    <v-btn class="app-btn buy" v-on:click="print(price.idx)" flat>BUY LICENSE</v-btn>
                 </div>
             </div>
         </div>
@@ -70,8 +70,8 @@
                   return v;
               })
             },
-            alert: function(i){
-//                console.log(i);
+            print: function(i){
+                console.log(i);
             }
         },
         created: function(){
