@@ -125,6 +125,7 @@ export default {
     props: ['accountData', 'accountIndex'],
     methods: {
         editAccount: function () {
+            this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
             this.$emit("editAccount", true);
             this.$emit("accountIndex", this.accountIndex);
         },

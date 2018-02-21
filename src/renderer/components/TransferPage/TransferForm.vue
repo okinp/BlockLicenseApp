@@ -1,6 +1,6 @@
 <template>
     <div class="transferForm">
-        <v-form v-model="valid" ref="form" id="account-form">
+        <v-form v-model="valid" ref="transferForm" id="account-form">
         <v-container fluid>
             <v-layout row wrap>
                 <v-flex xs12 class="text-center">
@@ -42,7 +42,7 @@ export default {
                   if (value==null || value==''){
                     //this.valid = false;
                     //return true;                    
-                    return 'Value Cannot be empty';
+                    return 'Value cannot be empty';
                   }
                   var m = (/[\d]+(\.[\d]+)?/).exec(value);
                   console.log();
@@ -90,7 +90,7 @@ export default {
                                        value: this.$EthTools.web3.utils.toWei(String(this.value))
                                      })
       .then(function(receipt){
-          console.log(receipt);
+          //console.log(receipt);
       })
       .then(()=>{
         this.publicKey = this.value = null;
@@ -105,6 +105,7 @@ export default {
       this.publicKey = null;
       this.value = null;
       this.valid = false;
+      this.$refs.transferForm.reset();
     },
     showConfirmationDialog: function(){
       this.showDialog = true;

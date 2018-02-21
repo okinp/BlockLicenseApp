@@ -51,13 +51,21 @@ const mutations = {
       state.accounts.push(newAccount);
   },
   DELETE_ACCOUNT: function(state, idx){
-    let acc = state.accounts[idx]; 
+    let acc = state.accounts[idx];
+    let wasPrimary = acc.primary;
     state.accounts.splice(idx,1);
+    if ( wasPrimary && state.accounts.length > 0)
+    {
+      state.accounts[0].primary = true;
+    } 
+
   },
   SET_ETH_BALANCE: function(state, data){
+      console.log(data);
       state.accounts[data.index].balance.eth = data.balance;
   },
   SET_BLT_BALANCE: function(state, data){
+      console.log(data);
       state.accounts[data.index].balance.blt = data.balance;
   }
 }
@@ -70,42 +78,41 @@ const actions = {
 }
 
 const getters = {
-    accountObjects: state => {
-        return state.accounts.map( function(entry){
-            return entry.accountObject
-        })
-    },
-    primaryAccount: state => {
-      return state.accounts.find(function(w){
-          return (w.primary === true)
+  accountObjects: state => {
+      return state.accounts.map( function(entry){
+          return entry.accountObject
       })
-    },
-    editAccount: state => {
-      return state.accounts.find(function(w){
-          return (w.edit === true)
-      })
-    },
-    editIndex: state => {
-      return state.accounts.findIndex(item => item.edit === true);
-    },
-    primaryIndex: state => {
-        return state.accounts.map(function(elem){
-            return elem.primary;
-        }).indexOf(true);
-    },
-    accounts: state=> {
-        return state.accounts;
-    },
-    isUpdate: state => {
-        return state.isUpdateNotAdd;
-    },
-    accountAtIndex: function(state){
-      let accounts = state.account;
-      return function(idx){
-        return accounts[idx];  
-      }
-    }
+  },
+  primaryAccount: state => {
+    return state.accounts.find(function(w){
+        return (w.primary === true)
+    })
+  },
+  editAccount: state => {
+    return state.accounts.find(function(w){
+        return (w.edit === true)
+    })
+  },
+  editIndex: state => {
+    return state.accounts.findIndex(item => item.edit === true);
+  },
+  primaryIndex: state => {
+      return state.accounts.map(function(elem){
+          return elem.primary;
+      }).indexOf(true);
+  },
+  accounts: state=> {
+      return state.accounts;
+  },
+  isUpdate: state => {
+      return state.isUpdateNotAdd;
+  },
+  accountAtIndex: function(state){
+    let accounts = state.accounts;
+    return idx => { return accounts[idx] };
+  }
 }
+
 
 export default {
   namespaced: true,

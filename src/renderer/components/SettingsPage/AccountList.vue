@@ -84,6 +84,7 @@
 </script>
 
 <style lang="scss" scoped>
+
 .accounts {
     #add-account {
         width: 100%;

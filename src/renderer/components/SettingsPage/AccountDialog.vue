@@ -2,7 +2,7 @@
   <v-dialog persistent v-model="shown" min-width="500px" max-width="612px" class="acountDialog">
       <v-card>
          <close-bar @close="cancelDialog"></close-bar>
-         <component class="dialog-s" :is="dialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="deleteAccount"></component>
+         <component class="dialog-s" :is="dialogOption" :showDialog="shown" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="deleteAccount"></component>
       </v-card>
   </v-dialog>
 </template>

@@ -47,12 +47,10 @@
 <script>
 export default {
 	name: 'edit-account-dialog',
-  props: ['accountIndex'],
+  props: ['accountIndex', 'showDialog'],
   methods: {
     updateAccount: function(){
-      this.$store.commit('Wallet/SET_ACCOUNT_NAME_AT_INDEX', { name: this.$data.name, index: accountIndex});
-      // this.$emit("editAccount", true);
-      // this.$emit("formSubmitted", true);
+      this.$store.commit('Wallet/SET_ACCOUNT_NAME_AT_INDEX', { name: this.$data.name, index: this.accountIndex});
       this.$emit("cancel", true);
     },
     cancelDialog: function(){
@@ -60,20 +58,51 @@ export default {
     },
   },
   data: function(){
-    return {
-        // name: this.$store.getters['Wallet/accountAtIndex'](accountIndex).name,
-        // privateKey: this.$store.getters['Wallet/accountAtIndex'](accountIndex).accountObject.privateKey,
-        // publicKey: this.$store.getters['Wallet/accountAtIndex'](accountIndex).accountObject.address,
-        name: null,
-        privateKey: null,
-        publicKey: null,
-        valid: false,
-        rules: {
-          validateName: function(value){
-              return value.length >= 6 ? true : 'Name must be at least 6 characters long'
+      return {
+          name: this.$store.getters['Wallet/editAccount'].name,
+          privateKey: this.$store.getters['Wallet/editAccount'].accountObject.privateKey,
+          publicKey: this.$store.getters['Wallet/editAccount'].accountObject.address,
+          valid: false,
+          rules: {
+              validateName: function(value){
+                  return value.length >= 6 ? true : 'Name must be at least 6 characters long'
+              }
           }
-        }
+      }
+  },
+  computed: {
+    getName: function(){
+      let account = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex);
+      this.name = account.name;
+      return this.name;
     }
   }
+  // computed: {
+  //   updateData: function(){
+  //     if (showDialog){
+  //       this.name = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).name;
+  //       this.privateKey = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).accountObject.privateKey;
+  //       this.publicKey = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).accountObject.publicKey;
+  //     }
+  //   },
+  // },
+  // data: function(){
+  //   let getter  = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex);
+  //   this.updateData();
+  //   return {
+  //       // name: getter.name,
+  //       // privateKey: getter.accountObject.privateKey,
+  //       // publicKey: getter.accountObject.address,
+  //       name: '',
+  //       privateKey: '',
+  //       publicKey: '',
+  //       valid: false,
+  //       rules: {
+  //         validateName: function(value){
+  //             return value.length >= 6 ? true : 'Name must be at least 6 characters long'
+  //         }
+  //       }
+  //   }
+  // }
 }
 </script>

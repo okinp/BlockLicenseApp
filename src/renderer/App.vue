@@ -12,16 +12,26 @@
     components: {HeaderNav},
     methods: {
       getBalanceEth: function(idx){
-          let address = this.$EthTools.wallet[idx].address;
+          let w = this.$store.getters['Wallet/accountAtIndex'](idx);
+          let address = w.accountObject.address;
+          //console.log('Public Key: ' + address);
           let balance = this.$EthTools.web3.eth.getBalance(String(address))
           .then( res => {
             var balanceToSet =  parseFloat(this.$EthTools.web3.utils.fromWei(res,'ether')).toFixed(4);
-            this.$store.commit('Wallet/SET_ETH_BALANCE', { index: idx, balance: parseFloat(this.$EthTools.web3.utils.fromWei(res,'ether')).toFixed(4)});
+            let data = {
+              index: idx,
+              balance: parseFloat(this.$EthTools.web3.utils.fromWei(res,'ether')).toFixed(4)
+            }
+            console.log(1);
+            console.log(data);
+            this.$store.commit('Wallet/SET_ETH_BALANCE', data);
           })
           .catch(err=>console.log(err.message));
       },
       getBalances: function(){
-        for ( var i=0; i < this.$EthTools.wallet.length; i++)
+        let numAccounts = this.$store.getters['Wallet/accounts'].length;
+        console.log("Number of Accounts: " + numAccounts);
+        for ( var i=0; i < numAccounts; i++)
         {
           this.getBalanceEth(i);
         }

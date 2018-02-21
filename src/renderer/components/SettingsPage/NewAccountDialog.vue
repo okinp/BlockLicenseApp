@@ -1,13 +1,13 @@
 <template>
 <div>
-        <v-form v-model="valid" ref="form" id="account-form">
+        <v-form v-model="valid" ref="newAccountForm" id="account-form">
             <v-container fluid >
                 <v-layout row wrap>
                     <v-flex xs12 class="text-center">
                         <h1>New Account</h1>
                     </v-flex>
                     <v-flex xs5>
-                        <v-radio-group v-model="autoKey" row :mandatory="false">
+                        <v-radio-group v-model="autoKey" row :mandatory="true">
                             <v-radio label="Auto Key" value='1' ></v-radio>
                             <v-radio label="Manual Key" value='0'></v-radio>
                         </v-radio-group>
@@ -47,6 +47,7 @@
  }
  #account-form {
   height: 492px;
+  min-width: 612px;
   .container-fluid {
     flex-grow: 1;
   }
@@ -63,10 +64,15 @@
 export default {
 	name: 'new-account-dialog',
 	methods: {
+      reset: function(){
+        this.$refs.newAccountForm.reset();
+      },
       resetDialog: function(){
-        console.log('reset dialog');
         this.name=null;
         this.privateKey=null;
+        this.autoKey = '1';
+        this.$refs.newAccountForm.reset();
+
       },
       cancelDialog: function(){
         this.resetDialog();
@@ -95,7 +101,12 @@ export default {
             valid: false,
             rules: {
                 validateName: function(value){
-                    return value.length >= 6 ? true : 'Name must be at least 6 characters long'
+                    if (value=='' || value==null)
+                    {
+                      return 'You need to supply a name';
+                    } else {
+                      return value.length >= 6 ? true : 'Name must be at least 6 characters long';
+                  }
                 },
                 validatePrivateKey: function(value){
                     const ethUtil = require('ethereumjs-util');
