@@ -7,7 +7,7 @@
                     <h1>Transfer</h1>
                 </v-flex>
                 <v-flex xs9 id="amount">
-                     <v-text-field name="input-1" label="Amount" id="testing1" v-model="value" :rules="[rules.validateNumber, rules.validateBalance]">
+                     <v-text-field name="input-1" label="Amount" id="testing1" v-model="value" :rules="[rules.validateValue]">
                      </v-text-field>
                 </v-flex>
                 <v-flex xs3 id="currency">
@@ -38,12 +38,30 @@ export default {
             valid: false,
             showDialog: false,
             rules: {
-                validateBalance: function(value)
-                {
-
-                },
-                validateValue: function(value){
-                    return !isNaN(value) ? true : 'Enter numerical value';
+                validateValue: (value) =>{
+                  if (value==null || value==''){
+                    //this.valid = false;
+                    //return true;                    
+                    return 'Value Cannot be empty';
+                  }
+                  var m = (/[\d]+(\.[\d]+)?/).exec(value);
+                  console.log();
+                  if (m==null)
+                  {
+                    return 'Enter a number';
+                  }
+                  if (m[0].length != value.length) {
+                    return 'Enter a number';
+                  }
+                  let valueInWei = this.$EthTools.web3.utils.toWei(String(this.value));
+                  let balanceEth = this.$store.getters['Wallet/accounts'][this.selectedIndex].balance.eth;
+                  let balanceEthWei = this.$EthTools.web3.utils.toWei(String(balanceEth));
+                  if ( (balanceEthWei - 42000) >= valueInWei )
+                  {
+                    return true;
+                  } else {
+                    return 'Not enough balance';
+                  }
                 },
                 validatePublicKey: function(value){
                     if (value== null )
