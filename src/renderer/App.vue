@@ -66,6 +66,7 @@
     overflow-y: auto;
     background-color: rgb(248, 249, 250);
     height: 100%;
+    min-width: 1175px;
     body {
       font-family: 'Ubuntu', sans-serif;
       min-height: 100%;

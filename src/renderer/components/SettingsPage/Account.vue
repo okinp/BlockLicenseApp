@@ -10,10 +10,8 @@
     </div>
     <div class="balance">
         <div class="amounts">
-            <p>
-                <span class="amount">{{accountData.balance.eth}}</span> 
-                ETH
-            </p>
+            <p class="amount">{{accountData.balance.eth}}</p>
+            <p class="currency">ETH</p>
         </div>
         <div class="makePrimary">
             <v-btn class="app-btn" v-bind:class="{ 'btn--disabled': !accountData.primary}"  @click="makePrimary" flat title="Set account as primary">Primary</v-btn>
@@ -68,21 +66,26 @@
         display: flex;
         padding-left: 12px;
         .amounts {
-            width: 40%;
+            width: 25%;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            p {
+            justify-content: flex-start;
+            align-items: center;
+            font-size: 18px;
+            & > p.amount {
+                width: 55%;
+                margin: 0;
+                color: #3857B9;
+                text-align: right;
+            } 
+            & > p.currency {
+                width: 45%;
                 margin: 0;
                 color: #BFC6D0;
-                font-size: 18px;
-                & > span.amount {
-                    color: #3857B9;
-                }            
+                padding-left: 5px;
             }
         }
         .makePrimary {
-            width: 40%;
+            width: 35%;
             display: flex;
             align-items: center;
             .app-btn {
@@ -102,7 +105,7 @@
             }
         }
         .controls {
-            width: 20%;
+            width: 40%;
             display: flex;
             flex-direction: column;
             a {
