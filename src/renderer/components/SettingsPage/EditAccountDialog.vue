@@ -63,6 +63,11 @@ export default {
     resetDialog: function(){
       this.$refs.editAccountForm.reset();
     },
+    updateData: function(){
+      this.name = this.$store.getters['Wallet/editAccount'].name;
+      this.privateKey = this.$store.getters['Wallet/editAccount'].accountObject.privateKey;
+      this.publicKey = this.$store.getters['Wallet/editAccount'].accountObject.address;
+    }
   },
   data: function(){
       return {
@@ -72,6 +77,9 @@ export default {
           valid: false,
           rules: {
               validateName: function(value){
+                  if ( value == null ){
+                    return 'Name must be at least 6 characters long';
+                  }
                   return value.length >= 6 ? true : 'Name must be at least 6 characters long'
               }
           }
@@ -82,6 +90,12 @@ export default {
       let account = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex);
       this.name = account.name;
       return this.name;
+    }
+  },
+  watch: { 
+    accountIndex: function(newVal, oldVal) { // watch it
+      //console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+      this.updateData();
     }
   }
   // computed: {
