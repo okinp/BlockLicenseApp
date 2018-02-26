@@ -2,6 +2,7 @@
     <div class="main-content">
 		<wallet-selector @selectedAccount="setSelectedAccount"/>
         <component :is="getComponent" :path="path" @close="closeEmited" @rdf="rdfEmitted" @filePath="fileSelected"></component>
+        <save-dialog :shown="showDialog" :path="path"></save-dialog>
     </div>
 </template>
 <style scoped>
@@ -18,15 +19,17 @@
 	import FileDrop from './IndexPage/FileDrop'
     import NewLicense from './IndexPage/NewLicense'
     import DisplayLicense from './IndexPage/DisplayLicense'
-    import SavingLicense from './IndexPage/SavingLicense'
+    import ProcessIcon from './IndexPage/ProcessIcon'
+    import SaveDialog from './IndexPage/SaveDialog'
     import xmpTools from './IndexPage/xmpTools.js'
+
     const dom = require('xmldom').DOMParser
     const serializer = require('xmldom').XMLSerializer
     const xmptoolkit = require('xmptoolkit')
     const JXON = require('jxon')
 	export default {
 		name: 'welcome',
-		components: { WalletSelector, FileDrop, NewLicense, DisplayLicense, SavingLicense },
+		components: { WalletSelector, FileDrop, NewLicense, DisplayLicense, ProcessIcon, SaveDialog },
         methods: {
             setSelectedAccount: function(x){
                 this.selectedAccountIndex = x; 
@@ -66,6 +69,8 @@
                                     this.licenseObj  = licenseObj;
 //                                    console.log(this.licenseObj)
                                 }
+                            } else {
+                                this.actionIndex = 2;
                             }
                         }
                         if ( this.actionIndex === 1 ){
@@ -73,19 +78,75 @@
                         }
                     })
             },
+            writeData: function(path)
+            {
+                this.path = path;
+                this.showDialog = true;
+                var xmlescape = require('xml-escape');
+                this.showLoader = true;
+                var start = 
+                `<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:block="http://www.blocklicense.io/rdf">
+                    <rdf:Description rdf:nodeID="genid1">
+                        <rdf:type rdf:resource="http://njh.me/blocklicense"/>
+                        <block:address>`+xmlescape('Contract Address')+`</block:address>
+                        <block:creator>`+xmlescape('Nikolas Psaroudakis')+`</block:creator>
+                        <block:email>`+xmlescape('psaroudakis@gmail.com')+`</block:email>
+                        <block:work-title>`+xmlescape('Sunset In Zanzibar"')+`</block:work-title>
+                        <block:work-description>`+xmlescape("The description goes here")+`</block:work-description>
+                        <block:type>`+xmlescape("The license key")+`</block:type>
+                        <block:license-description>`+xmlescape("The license description")+`</block:license-description>`;
+                var i =0;
+                var middle ='';
+                middle+= `<block:prices><rdf:Bag>`
+                for (i=0;i<3;i++){
+                    middle+=`<rdf:li>`+xmlescape(''+i*2.5+'')+`</rdf:li>`
+                }
+                middle+=`</rdf:Bag></block:prices>`
+                middle+= `<block:pricenames><rdf:Bag>`
+                for (i=0;i<3;i++){
+                    middle+=`<rdf:li>`+xmlescape("Price " + i)+`</rdf:li>`
+                }
+                middle+=`</rdf:Bag></block:pricenames>`
+                var end = `   </rdf:Description></rdf:RDF>`;
+                var final = start+middle+end;
+                //this.actionIndex = 3;
+                this.showLoader = true;
+                //alert(this.path);
+                xmpTools.writeAsync(this.path, final)
+                .then(()=>{
+                    console.log('yes');
+                    this.actionIndex = 0;
+                    this.showLoader = false;
+                })
+                .catch(e =>{
+                    this.showLoader = false;
+                    console.log(e);
+                    console.log(this);
+                });
+            },
             closeEmited: function(){
                 this.path = null;
                 this.actionIndex = 0;
             },
             rdfEmitted: function(data){
                 this.actionIndex = 3;
-                xmptoolkit.writeXmp(this.path, data, function (error, outFilename) {
-                    if (error) {
-                        alert('Error writing XMP');
-                    } else {
-                        this.actionIndex = 0;
-                    }
+                this.showLoader = true;
+                xmpTools.saveLicenseAsync(this.path, data)
+                .then(()=>{
+                    this.actionIndex = 0;
+                    this.showLoader = false;
+                    console.log('yes');
+                })
+                .catch(e =>{
+                    console.log(e);
                 });
+                // xmptoolkit.writeXmp(this.path, data, function (error, outFilename) {
+                //     if (error) {
+                //         alert('Error writing XMP');
+                //     } else {
+                //         this.actionIndex = 0;
+                //     }
+                // });
             }
         },
         computed: {
@@ -100,7 +161,9 @@
                 rdf: null,
                 actionIndex: 0,
                 actions: ['file-drop', 'display-license', 'new-license', 'saving-license'],
-                licenseObj: null
+                licenseObj: null,
+                showLoader: false,
+                showDialog: false
             }
         }
 	}

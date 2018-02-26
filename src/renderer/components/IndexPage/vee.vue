@@ -3,18 +3,17 @@
         <filename-banner :fileName="fileName"/>
         <close-bar @close="closeEmited"/>
         <div class="licenseData">  
-            <v-form v-model="valid" ref="newLicenseForm2" class="licenseForm">
+            <v-form v-model="valid" ref="newLicenseForm2" class="licenseForm" lazy-validation>
                 <div class="workInfo">
                     <div class="basic">
-
                         <div class="item">
-                            <v-text-field class="itemField" label="Creator Name" v-model="creatorName" :rules="rules.creatorName" required />
+                            <v-text-field class="itemField" label="Creator Name" :error-messages="errors.collect('name')" v-model="creatorName" v-validate="'required|min:6'" data-vv-name="name" required />
                         </div>
                         <div class="item">
-                            <v-text-field class="itemField" label="Email" v-model="email" :rules="rules.validateEmail" required />
+                            <v-text-field class="itemField" label="Email" :error-messages="errors.collect('email')" v-model="email" v-validate="'required|email'" data-vv-name="email" required />
                         </div>
                         <div class="item">
-                            <v-text-field class="itemField" label="Work Title" v-model="title" :rules="rules.validateTitle" />
+                            <v-text-field class="itemField" label="Work Title" :error-messages="errors.collect('title')" v-model="title" v-validate="'min:6'" data-vv-name="title"/>
                         </div>
                     </div>
                     <div class="more">
@@ -28,7 +27,7 @@
                 </div>
                 <div class="licenseInfo">
                     <v-select v-bind:items="items" v-on:change="onChange" label="License" single-line bottom  required />
-                    <text-area name='license-editor' v-model='licenseDescription' v-validate="'required|min:20'" data-vv-name="license-editor" data-vv-value-path="textModel" data-vv-as='description' :id="'license-editor'" :placeholder="'License Description'"  :rules="rules.licenseDescription"></text-area>
+                    <text-area name='license-editor'  v-validate="'required|min:20'" data-vv-name="license-editor" data-vv-value-path="textModel" data-vv-as='description' :id="'license-editor'" :placeholder="'License Description'" ></text-area>
                     <span v-show="errors.has('license-editor')">{{ errors.first('license-editor') }}</span>
                 </div>
             </v-form>
@@ -282,7 +281,10 @@ ql-toolbar {
                 this.$emit("rdf", final);
             },
             applyLicense: function(){
-                console.log(this.licenseDescription);
+                if (this.$refs.newLicenseForm2.validate()) {
+                    alert('valid');
+                    //console.log(this.licenseDescription);
+                } 
 // //                console.log('saving--')
 //                 if ( this.saveCustomLicense ){
 // //                    console.log('saving')
@@ -305,9 +307,32 @@ ql-toolbar {
                 this.license.prices.push(p);
             }
         },
-        created: function(){
+        $_veeValidate: {
+            validator: 'new'
+        },
+        mounted: function(){
+            this.$validator.localize('en', this.dictionary);
             //this.selectedIndex = this.$store.getters['Wallet/primaryIndex']
             //this.$emit("selectedAccount", this.selectedIndex);
+        },
+        dictionary: {
+            attributes: {
+                email: 'E-mail Address'
+                // custom attributes
+            },
+            custom: {
+                name: {
+                    required: () => 'Name can not be empty',
+                    max: 'The name field may not be greater than 10 characters'
+                    // custom messages
+                },
+                select: {
+                    required: 'Select field is required'
+                },
+                title: {
+                    min: 'The title must be greater than 6 characters'
+                }
+            }
         },
         data: function(){
             return {
@@ -327,24 +352,6 @@ ql-toolbar {
                 priceValue: '',
                 valid: false,
                 contractAddress: '',
-                rules: {
-                    creatorName:                     
-                    [ (v) => !!v || 'Name is required',
-                      (v) => v.length>6 ? true:'Name must be at least 6 characters long'
-                    ],
-                    validateEmail:
-                    [ (v) => !!v || 'E-mail is required',
-                      (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-                    ],
-                    validateLicenseTitle: 
-                    [ (v)=> v.length > 6?true:"License title is too short"],
-                    validateLicenseDescription: 
-                    [ (v)=> v.length > 30?true:"Description is too short"],
-                    validateLicenseSelect:
-                    [ () => this.selectedIndex !== 0 ?'You need to select a license':true ],
-                    licenseDescription:
-                    [ (v)=> v.length > 20?true:false]
-                },
                 license: {
                     title: '',
                     description: '',

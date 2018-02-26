@@ -102,7 +102,7 @@ export default {
         ev.preventDefault();
 	    var items = ev.dataTransfer.items;
 	    var file = items[0].getAsFile();
-        alert(file.path);
+        //alert(file.path);
         this.$emit("filePath", file.path);
     }
             

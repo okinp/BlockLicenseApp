@@ -6,6 +6,9 @@ import 'material-design-icons'
 import App from './App'
 import router from './router'
 import store from './store'
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate);
 
 var remote = require('electron').remote;
 var buildEditorContextMenu = remote.require('electron-editor-context-menu');
