@@ -27,9 +27,8 @@
                     </div>
                 </div>
                 <div class="licenseInfo">
-                    <v-select v-bind:items="items" v-on:change="onChange" label="License" single-line bottom  required />
-                    <text-area name='license-editor' v-model='licenseDescription' v-validate="'required|min:20'" data-vv-name="license-editor" data-vv-value-path="textModel" data-vv-as='description' :id="'license-editor'" :placeholder="'License Description'"  :rules="rules.licenseDescription"></text-area>
-                    <span v-show="errors.has('license-editor')">{{ errors.first('license-editor') }}</span>
+                    <v-select v-bind:items="items" v-on:change="onChange" label="License" single-line bottom :rules="rules.validateLicenseSelect"  required />
+
                 </div>
             </v-form>
             <v-container fluid id="account-list">
@@ -191,12 +190,10 @@ ql-toolbar {
     import FilenameBanner from './FilenameBanner'
     import CloseBar from '../Common/CloseBar'
     import PricingOptionEdit from './PricingOptionEdit'
-    import { VueEditor } from 'vue2-editor'
-    import TextArea from '../Common/TextArea'
 
     export default {
         name: 'new-license',
-        components: { FilenameBanner, CloseBar, PricingOptionEdit, VueEditor, TextArea },
+        components: { FilenameBanner, CloseBar, PricingOptionEdit },
         props: ['path'],
         computed: {
             items: function(){
