@@ -24,9 +24,12 @@ export default {
 	            priceDescription: [ (v)=> v.length > 8? true:"Price description must be at least 8 characters long"],
 	            priceValue: [ (v)=> v > 0 ?true:"Value > 0"]
 	        },
+	        // priceName: this.description,
+	        // priceValue: this.value,
+	        // idx: ''
 	        priceName: this.description,
 	        priceValue: this.value,
-	        idx: '',
+	        idx: this.index,
         }
     },
 	watch: {

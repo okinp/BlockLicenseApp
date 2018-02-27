@@ -177,8 +177,9 @@
                 this.license.prices.push(p);
             },
             removePricingOption: function(idx){
+                console.log(idx);
                 if (this.license.prices.length > 1){
-                    this.license.prices.splice(idx, 1);
+                  this.license.prices.splice(idx, 1);
                 }
             },
             editPricingOption: function(price){
@@ -296,6 +297,9 @@
                         display: flex;
                         align-items: center;
                         justify-content: flex-end;
+                        .input-group__details {
+                            flex-grow: unset !important;
+                        }
                     }
                 }
                 .description {
