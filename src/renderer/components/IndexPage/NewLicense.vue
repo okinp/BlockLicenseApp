@@ -95,6 +95,7 @@
                 this.showCustomLicense = true;
                 delete require.cache[require.resolve('./defaultLicenses.json')]
                 const json = require('./defaultLicenses.json');
+                let jsonLength = json.length;
                 console.log("json length: " + json.length + " index: " + x);
 
                 if ( this.selectedIndex == 0 ){
@@ -117,8 +118,9 @@
                         getter = 'Licenses/closedLicenses'   
                     }
                     let licenses = this.$store.getters[getter];
+                    console.log(licenses);
 
-                    this.license = JSON.parse(JSON.stringify(licenses[x-1]));
+                    this.license = JSON.parse(JSON.stringify(licenses[x-jsonLength - 1]));
                 } 
             },
             closeEmited: function(){

@@ -44,14 +44,11 @@ const mutations = {
     },    
     ADD_CLOSED_LICENSE: function(state,l ){
         //console.log(l);
-        var el = state.licenses.closed.find(function(v){
+        var idx = state.licenses.closed.findIndex(function(v){
             return v.title === l.title;
         })
-        if (el) {
-            
-//            console.log('element found!!')
-//            console.log(l)
-            el = l
+        if (idx != -1) {
+            state.licenses.closed[idx] = l;
         } else {
             state.licenses.closed.push(l)
         }
