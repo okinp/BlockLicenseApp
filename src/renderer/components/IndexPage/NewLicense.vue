@@ -98,7 +98,7 @@
                          title: '',
                          description: '',
                          prices: [
-                            { priceName: '', priceValue: '', priceId: 0 }
+                            { priceName: '', priceValue: '', priceId: this.generateId() }
                          ]
                     }
                 } else if ( this.selectedIndex > 0 && this.selectedIndex <= json.length )
@@ -151,6 +151,7 @@
             applyLicense: function(){
                 if ( this.saveCustomLicense ){
                     //console.log('saving license')
+                    console.log(this.license);
                     this.licenseKey === '1' ? this.$store.commit('Licenses/ADD_CLOSED_LICENSE', this.license):this.$store.commit('Licenses/ADD_OPEN_LICENSE', this.license);
                 }
                 this.generateRDF();

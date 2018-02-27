@@ -4,18 +4,18 @@
 		"description": "Topping gummies donut fruitcake marshmallow dessert wafer chocolate bar. Gingerbread tootsie roll chocolate bar pastry ice cream danish jelly beans marzipan. Bear claw bear claw gummi bears candy jelly. Jelly-o soufflé dessert pie wafer topping cupcake. Topping jelly-o apple pie sweet roll pastry jelly beans. Dragée tiramisu jelly-o pudding apple pie cheesecake sugar plum chocolate cake. Chocolate cake donut cookie pastry caramels oat cake sweet powder candy. Bear claw sweet toffee. Pudding icing marshmallow cotton candy gummies.",
 		"prices": [{
 				"priceName": "For the Web (single website)",
-				"priceValue": 0.5,
-				"priceId": 0
+				"priceValue": "0.5",
+				"priceId": "0"
 			},
 			{
 				"priceName": "For the Web (unlimited websites)",
-				"priceValue": 1.2,
-				"priceId": 1
+				"priceValue": "1.2",
+				"priceId": "1"
 			},
 			{
 				"priceName": "For Print (leaflets, posters, books)",
-				"priceValue": 3.1,
-				"priceId": 2
+				"priceValue": "3.1",
+				"priceId": "2"
 			}
 		]
 	},
@@ -24,18 +24,18 @@
 		"description": "Powder dessert ice cream gummies oat cake lollipop chocolate cake cotton candy. Powder sugar plum apple pie sweet. Pudding pie wafer lollipop caramels pastry jujubes jelly-o bonbon. Candy canes biscuit lemon drops marshmallow jelly beans ice cream gummies jelly-o danish. Cake candy topping chocolate bear claw dragée cake pie pie. Cookie ice cream cupcake chupa chups sesame snaps sesame snaps muffin sweet pudding. Cupcake apple pie danish brownie soufflé tart. Marshmallow jelly-o pastry cake pie donut cake pudding.",
 		"prices": [{
 				"priceName": "For the Web (single website)",
-				"priceValue": 1.3,
-				"priceId": 0
+				"priceValue": "1.3",
+				"priceId": "0"
 			},
 			{
 				"priceName": "For the Web (unlimited websites)",
-				"priceValue": 2.4,
-				"priceId": 1
+				"priceValue": "2.4",
+				"priceId": "1"
 			},
 			{
 				"priceName": "For TV (commercials etc)",
-				"priceValue": 4.5,
-				"priceId": 2
+				"priceValue": "4.5",
+				"priceId": "2"
 			}
 		]
 	}

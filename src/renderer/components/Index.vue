@@ -45,9 +45,10 @@
                             const rdfElement = doc.getElementsByTagName('rdf:RDF')[0];
                             const blocklicenseXM = doc.getElementsByTagName('block:creator')[0];
                             if (blocklicenseXM!=undefined ) {
+                                //console.log(rdfElement);
+                                //console.log('contains bl data');
                                 this.rdf = new serializer().serializeToString(rdfElement);
                                 var ob = JXON.stringToJs(this.rdf)['rdf:RDF']['rdf:Description'];
-//                                console.log(ob)
                                 var licenseObj = {
                                     creator: ob['block:creator'],
                                     email: ob['block:email'],
@@ -57,19 +58,29 @@
                                     licenseDescription: ob['block:license-description'],
                                     prices: []
                                 }
+                                console.log(licenseObj)
                                 var priceNames = ob['block:pricenames']['rdf:Bag']['rdf:li'];
                                 var priceValues = ob['block:prices']['rdf:Bag']['rdf:li'];
-                                if ( priceNames.length === priceValues.length ){
+                                if ( Array.isArray(priceNames) && Array.isArray(priceValues) )
+                                {
+                                    if ( priceNames.length === priceValues.length ){
+                                        this.actionIndex = 1;
+                                        var l = priceNames.length;
+                                        for (var i=0; i<l; i++ )
+                                        {
+                                            licenseObj.prices.push({name: priceNames[i], value: priceValues[i]});
+                                        }
+                                        this.licenseObj  = licenseObj;
+                                        console.log(this.licenseObj)
+                                    } 
+                                } else {
                                     this.actionIndex = 1;
-                                    var l = priceNames.length;
-                                    for (var i=0; i<l; i++ )
-                                    {
-                                        licenseObj.prices.push({name: priceNames[i], value: priceValues[i]});
-                                    }
+                                    console.log('Not array');
+                                    licenseObj.prices.push({name: priceNames, value: priceValues});
                                     this.licenseObj  = licenseObj;
-//                                    console.log(this.licenseObj)
                                 }
                             } else {
+                                console.log(rdfElement);
                                 this.actionIndex = 2;
                             }
                         }
