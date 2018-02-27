@@ -11,6 +11,7 @@ const getters = {
         return state.licenses.open
     },
     closedLicenses: function(state){
+        console.log('closed licenses getter')
         return state.licenses.closed
     },
     current: function(state){
@@ -42,6 +43,7 @@ const mutations = {
         }
     },    
     ADD_CLOSED_LICENSE: function(state,l ){
+        //console.log(l);
         var el = state.licenses.closed.find(function(v){
             return v.title === l.title;
         })

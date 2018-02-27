@@ -30,14 +30,14 @@ export default {
         }
     },
 	watch: {
-		// description: function(newV, oldV) { // watch it
-		//   console.log('Prop changed: ', newV, ' | was: ', oldV)
-		//   this.priceName = newV;
-		//   //this.value = newV.priceValue;
-		// },
-		// value: function(newV, oldV){
-		// 	this.priceValue = newV;
-		// },
+		description: function(newV, oldV) { // watch it
+		  console.log('Prop changed: ', newV, ' | was: ', oldV)
+		  this.priceName = newV;
+		  //this.value = newV.priceValue;
+		},
+		value: function(newV, oldV){
+			this.priceValue = newV;
+		},
 		index: function(newV, oldV){
 			this.idx = newV;
 		}

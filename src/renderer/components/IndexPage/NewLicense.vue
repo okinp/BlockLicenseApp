@@ -35,7 +35,7 @@
                     <v-text-field label="License Description" v-model="license.description" :rules="rules.validateLicenseDescription" :rows="4" :no-resize="true" multi-line  required/>
                 </div>  
                 <div class="prices">
-                    <div class="price" v-for="(option,idx) in license.prices" :option="option" :key="option.priceId"  v-if="showCustomLicense && licenseKey=='1'">
+                    <div class="price" v-for="(option,idx) in this.license.prices" :key="option.priceId"  v-if="showCustomLicense && licenseKey=='1'">
                         <pricing-option :description="option.priceName" :value="option.priceValue" :index="idx" @deletePrice="removePricingOption" @changedPrice= "editPricingOption"></pricing-option>
                     </div>
                 </div>
@@ -68,9 +68,12 @@
                 var licenses = null
                 if ( this.licenseKey === '1') {
                  licenses = this.$store.getters['Licenses/closedLicenses'];
+                 console.log(licenses);
                 } else {
                  licenses = this.$store.getters['Licenses/openLicenses'];
                 }
+                                 console.log('the licenses')
+                 console.log(licenses)
                 var newList = [{text: '+Create License', value: 0}] 
                 var json = require('./defaultLicenses.json');
                 let jsonList = json.map(function(x,idx){
@@ -92,6 +95,7 @@
                 this.showCustomLicense = true;
                 delete require.cache[require.resolve('./defaultLicenses.json')]
                 const json = require('./defaultLicenses.json');
+                console.log("json length: " + json.length + " index: " + x);
 
                 if ( this.selectedIndex == 0 ){
                      this.license = {
@@ -101,16 +105,19 @@
                             { priceName: '', priceValue: '', priceId: this.generateId() }
                          ]
                     }
-                } else if ( this.selectedIndex > 0 && this.selectedIndex <= json.length )
+                } else if ( this.selectedIndex > 0 && (this.selectedIndex <= json.length) )
                 {
                     this.license = json[this.selectedIndex - 1];
+                    console.log(this.license);
                 }
                 else {
+                    console.log('get closed licenses');
                     let getter = 'Licenses/openLicenses'
                     if (this.licenseKey==='1'){
                         getter = 'Licenses/closedLicenses'   
                     }
                     let licenses = this.$store.getters[getter];
+
                     this.license = JSON.parse(JSON.stringify(licenses[x-1]));
                 } 
             },
@@ -151,7 +158,7 @@
             applyLicense: function(){
                 if ( this.saveCustomLicense ){
                     //console.log('saving license')
-                    console.log(this.license);
+                    //console.log(this.license);
                     this.licenseKey === '1' ? this.$store.commit('Licenses/ADD_CLOSED_LICENSE', this.license):this.$store.commit('Licenses/ADD_OPEN_LICENSE', this.license);
                 }
                 this.generateRDF();
