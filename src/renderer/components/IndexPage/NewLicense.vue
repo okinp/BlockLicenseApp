@@ -2,224 +2,97 @@
     <div class="newLicense">
         <filename-banner :fileName="fileName"/>
         <close-bar @close="closeEmited"/>
-        <div class="licenseData">  
-            <v-form v-model="valid" ref="newLicenseForm2" class="licenseForm">
-                <div class="workInfo">
-                    <div class="basic">
-
-                        <div class="item">
-                            <v-text-field class="itemField" label="Creator Name" v-model="creatorName" :rules="rules.creatorName" required />
-                        </div>
-                        <div class="item">
-                            <v-text-field class="itemField" label="Email" v-model="email" :rules="rules.validateEmail" required />
-                        </div>
-                        <div class="item">
-                            <v-text-field class="itemField" label="Work Title" v-model="title" :rules="rules.validateTitle" />
-                        </div>
+        <v-form v-model="valid" ref="newLicenseForm" class="licenseForm">
+            <div class="workInfo">
+                <div class="basic">
+                    <div class="item">
+                        <v-text-field class="itemField" label="Work Title" v-model="title" :rules="rules.workTitle" required/>
                     </div>
-                    <div class="more">
-                        <div class="workDescription">
-
-                            <!-- <vue-editor id="firstEditor" v-model="workDescription" :placeholder="'Work Description'"></vue-editor> -->
-<!-- 
-                            <v-text-field label="Work Description" v-model="description" :rules="rules.validateDescription" multi-line/> -->
-                        </div>
+                    <div class="item">
+                        <v-text-field class="itemField" label="Creator Name" v-model="creatorName" :rules="rules.creatorName" required />
+                    </div>
+                    <div class="item">
+                        <v-text-field class="itemField" label="Email" v-model="email" :rules="rules.validateEmail" required />
                     </div>
                 </div>
-                <div class="licenseInfo">
-                    <v-select v-bind:items="items" v-on:change="onChange" label="License" single-line bottom :rules="rules.validateLicenseSelect"  required />
-
+                <div class="details">
+                    <v-text-field label="Work Description" v-model="workDescription" :rules="rules.validateDescription" :no-resize="true" :rows="3" multi-line/>
                 </div>
-            </v-form>
-            <v-container fluid id="account-list">
-                <v-layout row wrap>
-                    <v-flex xs12 class="text-center">
-                        <v-btn flat class="app-btn" v-on:click="applyLicense" v-bind:class="{ 'btn--disabled': !valid}">Confirm</v-btn>
-                    </v-flex>
-                  <v-flex xs12 class="text-center">
-                      <v-btn flat class="cancel-btn" v-on:click="closeEmited">Cancel</v-btn>
-                  </v-flex>
-                </v-layout>
-            </v-container>
+            </div>
+            <div class="licenseInfo">
+                <div class="settings">
+                    <div class="selectLicense">
+                        <v-select v-bind:items="licenseItems" v-on:change="onChange" label="License" single-line bottom :rules="rules.validateLicenseSelect"  required />
+                    </div>
+                    <div class="licenseName" v-if="saveCustomLicense">
+                        <v-text-field label="License Title" v-model="license.title" :rules="rules.validateLicenseTitle"  required />
+                    </div>
+                    <div class="saveLicense">
+                        <v-checkbox label="Save license" v-model="saveCustomLicense" light></v-checkbox>
+                    </div>
+                </div>
+                <div class="description">
+                    <v-text-field label="License Description" v-model="license.description" :rules="rules.validateLicenseDescription" :rows="4" :no-resize="true" multi-line  required/>
+                </div>  
+                <div class="prices">
+                    <div class="price" v-for="(option,idx) in license.prices" :option="option" :key="option.priceId"  v-if="showCustomLicense && licenseKey=='1'">
+                        <pricing-option :description="option.priceName" :value="option.priceValue" :index="idx" @deletePrice="removePricingOption" @changedPrice= "editPricingOption"></pricing-option>
+                    </div>
+                </div>
+                <div class="addPrice">
+                    <a href="#" id="add-price" v-on:click="addPricingOption">+ ADD PRICING OPTION</a>
+                </div>
+            </div>    
+        </v-form>
+        <div class="buttons">
+            <div class="item">
+                <v-btn flat class="app-btn" v-on:click="applyLicense" v-bind:class="{ 'btn--disabled': !valid}">Confirm</v-btn>
+            </div>
+            <div class="item">
+                <v-btn flat class="cancel-btn" v-on:click="closeEmited">Cancel</v-btn>
+            </div>
         </div>
     </div>
 </template>
-<style lang="scss">
-    .workDescription {
-        height: 100%;
-        .ql-toolbar {
-            display: none;
-        }
-        #firstEditor {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            .ql-editor {
-                min-height: 100px;
-                max-height: 100px;
-            }
-        }
-    }
-
-    .licenseInfo {
-        .ql-toolbar {
-            display: none;
-        }
-        #secondEditor {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            .ql-editor {
-                min-height: 150px;
-                max-height: 150px;
-            }
-        }
-    }
-
-
-    .card {
-        ul.list {
-          background-color: white;
-          .list__tile__title {
-            color: dimgray;
-          }
-          .list__tile--active {
-            .list__tile__title {
-              color: #3857B9 !important;
-            }
-          }
-        }
-    }
-
-</style>
-
-<style lang="scss" scoped>
-    h1.h-app {
-        color: #8F949D;
-        margin: 0;
-        font-size: 23px;
-        font-weight: 300;
-        border-bottom: 1px solid rgb(204,204,204);
-    }
-    .ql-editor {
-        max-height: 200px;
-        min-height: 200px;
-    }
-    .newLicense {
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        .licenseData {
-            padding: 0 24px;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            .licenseForm {
-                display: flex;
-                flex-direction: column;
-                box-sizing: border-box;
-                padding: 0;
-                .workInfo {
-                    padding: 0;
-                    display: flex;
-                    flex-direction: column;
-                    box-sizing: border-box;
-                    width: 100%;
-                    .basic {
-                        width: 100%;
-                        display: flex;
-                        box-sizing: border-box;
-                        justify-content: space-between;
-                        .item {
-                            padding-right:24px;
-                            display: flex;
-                            justify-content: center;
-                            width: 100%;
-                            .itemField {
-                                width:100%;
-                            }
-                            &:nth-of-type(3){
-                                padding-right: 0;
-                            }
-                        }
-
-
-                    }
-                    .more {
-                        width: 100%;
-                        .workDescription {
-                            height: 100%;
-                            .ql-toolbar {
-                                display: none;
-                            }
-                        }
-                    }
-                }
-                .licenseInfo {
-                    padding: 0;
-                    display: flex;
-                    flex-direction: column;
-                    box-sizing: border-box;
-                    width: 100%;
-                }
-            }
-        }
-    }
-
-
-
-ql-toolbar {
-    display: none !important;
-}
-
-
-
-    #add-price {
-        font-size: 14px;
-        font-weight: 500;
-        text-align: left;
-        color: #BFC6D0;    
-        text-decoration: none;
-    }
-    .form-section-title {
-        color: rgba(0,0,0,0.54);
-        font-size: 16px;
-    }
-
-</style>
 <script>
     import FilenameBanner from './FilenameBanner'
     import CloseBar from '../Common/CloseBar'
-    import PricingOptionEdit from './PricingOptionEdit'
+    import PricingOption from './PricingOption'
 
     export default {
         name: 'new-license',
-        components: { FilenameBanner, CloseBar, PricingOptionEdit },
+        components: { FilenameBanner, CloseBar, PricingOption },
         props: ['path'],
         computed: {
-            items: function(){
+            licenseItems: function(){
                 var licenses = null
-//                this.$store.commit('Licenses/CLEAR_LICENSES')
                 if ( this.licenseKey === '1') {
-//                     console.log('closed license vuex called')
                  licenses = this.$store.getters['Licenses/closedLicenses'];
                 } else {
-//                    console.log('Open license vuex called')
                  licenses = this.$store.getters['Licenses/openLicenses'];
                 }
-                var newList = [{text: '+ Create your custom license', value: 0}] 
-                var licList = licenses.map(function(x, idx){
-                    return {text: x.title, value: idx + 1}
+                var newList = [{text: '+Create License', value: 0}] 
+                var json = require('./defaultLicenses.json');
+                let jsonList = json.map(function(x,idx){
+                    return {text: x.title, value: idx + 1 }
                 })
-                //var licList = [];
-                return newList.concat(licList);
+                let len = jsonList.length;
+                
+                var licList = licenses.map(function(x, idx){
+                    return {text: x.title, value: idx + 1 + len}
+                })
+                let L1 = newList.concat(jsonList);
+                return L1.concat(licList);
             }, 
         },
         methods: {
             onChange: function(x){
                 this.selectedIndex = x;
-//                console.log('onChange Called' + x);
-//                this.$emit("selectedAccount", x);
+                this.$refs.newLicenseForm.validate();
                 this.showCustomLicense = true;
+                delete require.cache[require.resolve('./defaultLicenses.json')]
+                const json = require('./defaultLicenses.json');
+
                 if ( this.selectedIndex == 0 ){
                      this.license = {
                          title: '',
@@ -228,25 +101,22 @@ ql-toolbar {
                             { priceName: '', priceValue: '', priceId: 0 }
                          ]
                     }
-                } else {
-                    var getter = 'Licenses/openLicenses'
+                } else if ( this.selectedIndex > 0 && this.selectedIndex <= json.length )
+                {
+                    this.license = json[this.selectedIndex - 1];
+                }
+                else {
+                    let getter = 'Licenses/openLicenses'
                     if (this.licenseKey==='1'){
                         getter = 'Licenses/closedLicenses'   
                     }
-                    var licenses = this.$store.getters[getter];
-                    //deep clone data trick
+                    let licenses = this.$store.getters[getter];
                     this.license = JSON.parse(JSON.stringify(licenses[x-1]));
-                    //var copy = Object.assign({}, obj);
                 } 
             },
             closeEmited: function(){
+                //console.log(this.license);
                 this.$emit("close", true);
-            },
-            show: function(){
-            
-            },
-            alertMe: (v) =>{
-                alert(v);
             },
             generateRDF: function(){
                 var xmlescape = require('xml-escape');
@@ -279,17 +149,12 @@ ql-toolbar {
                 this.$emit("rdf", final);
             },
             applyLicense: function(){
-                console.log(this.licenseDescription);
-// //                console.log('saving--')
-//                 if ( this.saveCustomLicense ){
-// //                    console.log('saving')
-//                     this.licenseKey === '1' ? this.$store.commit('Licenses/ADD_CLOSED_LICENSE', this.license):this.$store.commit('Licenses/ADD_OPEN_LICENSE', this.license);;
-//                 }
-//                 this.generateRDF();
+                if ( this.saveCustomLicense ){
+                    //console.log('saving license')
+                    this.licenseKey === '1' ? this.$store.commit('Licenses/ADD_CLOSED_LICENSE', this.license):this.$store.commit('Licenses/ADD_OPEN_LICENSE', this.license);
+                }
+                this.generateRDF();
                 this.$emit("close", true);
-            },
-            cancel: function(){
-                
             },
             generateId: function(){
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -300,11 +165,17 @@ ql-toolbar {
             addPricingOption: function(){
                 let p = { priceName: '', priceValue: '', priceId: this.generateId()}
                 this.license.prices.push(p);
+            },
+            removePricingOption: function(idx){
+                if (this.license.prices.length > 1){
+                    this.license.prices.splice(idx, 1);
+                }
+            },
+            editPricingOption: function(price){
+                let idx = price.index;
+                this.license.prices[idx].priceName = price.name;
+                this.license.prices[idx].priceValue = price.value;
             }
-        },
-        created: function(){
-            //this.selectedIndex = this.$store.getters['Wallet/primaryIndex']
-            //this.$emit("selectedAccount", this.selectedIndex);
         },
         data: function(){
             return {
@@ -315,8 +186,7 @@ ql-toolbar {
                 workDescription: '',
                 licenseDescription: '',
                 licenseKey: '1',
-                //licenseTitle: '',
-                selectedIndex: 0,
+                selectedIndex: null,
                 showCustomLicense: false,
                 saveCustomLicense: false,
                 addPriceFormShown: false,
@@ -325,6 +195,10 @@ ql-toolbar {
                 valid: false,
                 contractAddress: '',
                 rules: {
+                    workTitle:                     
+                    [ (v) => !!v || 'Title is required',
+                      (v) => v.length>6 ? true:'Title must be at least 6 characters long'
+                    ],
                     creatorName:                     
                     [ (v) => !!v || 'Name is required',
                       (v) => v.length>6 ? true:'Name must be at least 6 characters long'
@@ -338,9 +212,15 @@ ql-toolbar {
                     validateLicenseDescription: 
                     [ (v)=> v.length > 30?true:"Description is too short"],
                     validateLicenseSelect:
-                    [ () => this.selectedIndex !== 0 ?'You need to select a license':true ],
+                    [ (v) => {
+                        // console.log('It is: ' + this.selectedIndex);
+                        // console.log(v);
+                        return this.selectedIndex !== null ? true: 'You need to select a license' 
+                    }],
                     licenseDescription:
-                    [ (v)=> v.length > 20?true:false]
+                    [ (v)=> v.length > 20?true:false],
+                    priceDescription: [ (v)=> v.length > 8? true:"Price description must be at least 8 characters long"],
+                    priceValue: [ (v)=> v > 0 ?true:"Value > 0"]
                 },
                 license: {
                     title: '',
@@ -349,10 +229,113 @@ ql-toolbar {
                         { priceName: '', priceValue: '', priceId: 0 }
                     ]
                 },
-                customToolbar: [
-                  ['bold', 'italic', 'underline'],
-                ],
             }
         }
     }
 </script>
+<style lang="scss" scoped>
+    * {
+        margin: 0;
+        box-sizing: border-box;     
+    }
+    .newLicense {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: #f8f9fa;
+        .licenseForm {
+            display:flex;
+            width: 100%;
+            flex-direction: column;
+            padding: 0 24px;
+            .workInfo {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                .basic {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                    .item {
+                        width: 32%;
+                    }
+                }
+                .details {
+                    display: flex;
+                    width: 100%;
+                }
+            }
+            .licenseInfo {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                .settings {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    .selectLicense {
+                        width: 32%;
+                        display: flex;
+                    }
+                    .licenseName {
+                        width: 32%;
+                        display: flex;
+                    }
+                    .saveLicense {
+                        width: 32%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                    }
+                }
+                .description {
+                    width: 100%;
+                    display: flex;
+                }
+                .prices {
+                    margin-top: 30px;
+                    min-height: 218px;
+                    max-height: 218px;
+                    overflow-y: auto;
+                    padding: 0 10px 0 0;
+                }
+                .addPrice {
+                    width: 100%;
+                    height: 60px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    text-align: left;
+                    display: flex;
+                    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                    padding-right: 24px;
+                    justify-content: flex-end;
+                    a {
+                        text-decoration: none;
+                        cursor: pointer;
+                        float: right;
+                        display:block;
+                        height: 100%;
+                        line-height: 60px;
+                        color: #b8bbc0;
+                    }
+                }
+            }
+        }
+        .buttons {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: flex-end;
+            .item {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                margin: 5px 0;
+                .app-btn {
+                    width: 120px;
+                }
+            }
+        }
+    }
+</style>

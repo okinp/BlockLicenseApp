@@ -78,52 +78,6 @@
                         }
                     })
             },
-            writeData: function(path)
-            {
-                this.path = path;
-                this.showDialog = true;
-                var xmlescape = require('xml-escape');
-                this.showLoader = true;
-                var start = 
-                `<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:block="http://www.blocklicense.io/rdf">
-                    <rdf:Description rdf:nodeID="genid1">
-                        <rdf:type rdf:resource="http://njh.me/blocklicense"/>
-                        <block:address>`+xmlescape('Contract Address')+`</block:address>
-                        <block:creator>`+xmlescape('Nikolas Psaroudakis')+`</block:creator>
-                        <block:email>`+xmlescape('psaroudakis@gmail.com')+`</block:email>
-                        <block:work-title>`+xmlescape('Sunset In Zanzibar"')+`</block:work-title>
-                        <block:work-description>`+xmlescape("The description goes here")+`</block:work-description>
-                        <block:type>`+xmlescape("The license key")+`</block:type>
-                        <block:license-description>`+xmlescape("The license description")+`</block:license-description>`;
-                var i =0;
-                var middle ='';
-                middle+= `<block:prices><rdf:Bag>`
-                for (i=0;i<3;i++){
-                    middle+=`<rdf:li>`+xmlescape(''+i*2.5+'')+`</rdf:li>`
-                }
-                middle+=`</rdf:Bag></block:prices>`
-                middle+= `<block:pricenames><rdf:Bag>`
-                for (i=0;i<3;i++){
-                    middle+=`<rdf:li>`+xmlescape("Price " + i)+`</rdf:li>`
-                }
-                middle+=`</rdf:Bag></block:pricenames>`
-                var end = `   </rdf:Description></rdf:RDF>`;
-                var final = start+middle+end;
-                //this.actionIndex = 3;
-                this.showLoader = true;
-                //alert(this.path);
-                xmpTools.writeAsync(this.path, final)
-                .then(()=>{
-                    console.log('yes');
-                    this.actionIndex = 0;
-                    this.showLoader = false;
-                })
-                .catch(e =>{
-                    this.showLoader = false;
-                    console.log(e);
-                    console.log(this);
-                });
-            },
             closeEmited: function(){
                 this.path = null;
                 this.actionIndex = 0;
@@ -140,13 +94,6 @@
                 .catch(e =>{
                     console.log(e);
                 });
-                // xmptoolkit.writeXmp(this.path, data, function (error, outFilename) {
-                //     if (error) {
-                //         alert('Error writing XMP');
-                //     } else {
-                //         this.actionIndex = 0;
-                //     }
-                // });
             }
         },
         computed: {

@@ -50,7 +50,6 @@
                 margin: 0;                
             }
             a {
-
                 text-decoration: none;
                 font-size: 18px;
                 height: 18px;
