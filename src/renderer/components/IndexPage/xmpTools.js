@@ -41,7 +41,7 @@ var saveLicenseAsync = function(fileName, license ){
 
 const writeAsync = (fileName, license ) => new Promise((resolve, reject)=>{
     let write = xmptoolkit.writeXmp(fileName, license, (error, outFilename)=>{
-            if (error !== null )  reject(error);
+            if (error)  reject(error);
             resolve(outFilename);
     });
 });

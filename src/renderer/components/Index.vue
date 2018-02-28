@@ -1,8 +1,19 @@
 <template>
     <div class="main-content">
 		<wallet-selector @selectedAccount="setSelectedAccount"/>
-        <component :is="getComponent" :path="path" @close="closeEmited" @rdf="rdfEmitted" @filePath="fileSelected"></component>
-        <save-dialog :shown="showDialog" :path="path"></save-dialog>
+        <component :is="getComponent" :path="path" :selectedAccountIndex="selectedAccountIndex"
+                    @close="closeNewLicenseEmited" 
+                    @rdf="rdfEmitted"
+                    @prices="pricesEmitted" 
+                    @filePath="fileSelected"></component>
+        <save-dialog    :shown="showDialog" 
+                        :path="path" 
+                        :processingStage="currentStage"
+                        :actionA="xmpAction"
+                        :actionB="hashAction"
+                        :actionC="ethAction" 
+                        @cancel="closeDialogEmited"
+                        @process="applyLicense">Saving</save-dialog>
     </div>
 </template>
 <style scoped>
@@ -19,7 +30,6 @@
 	import FileDrop from './IndexPage/FileDrop'
     import NewLicense from './IndexPage/NewLicense'
     import DisplayLicense from './IndexPage/DisplayLicense'
-    import ProcessIcon from './IndexPage/ProcessIcon'
     import SaveDialog from './IndexPage/SaveDialog'
     import xmpTools from './IndexPage/xmpTools.js'
 
@@ -29,7 +39,7 @@
     const JXON = require('jxon')
 	export default {
 		name: 'welcome',
-		components: { WalletSelector, FileDrop, NewLicense, DisplayLicense, ProcessIcon, SaveDialog },
+		components: { WalletSelector, FileDrop, NewLicense, DisplayLicense, SaveDialog },
         methods: {
             setSelectedAccount: function(x){
                 this.selectedAccountIndex = x; 
@@ -89,22 +99,77 @@
                         }
                     })
             },
-            closeEmited: function(){
-                this.path = null;
+            closeNewLicenseEmited: function(){
+                //this.path = null;
                 this.actionIndex = 0;
+                
+            },
+            closeDialogEmited: function(){
+                this.path = null;
+                this.showDialog = false;
             },
             rdfEmitted: function(data){
-                this.actionIndex = 3;
-                this.showLoader = true;
-                xmpTools.saveLicenseAsync(this.path, data)
-                .then(()=>{
+                console.log('rdf emitted');
+                this.actionIndex = 0;
+                this.showDialog = true;
+                this.rdfData = data;
+            },
+            pricesEmitted: function(data){
+                let prices = data;
+                const map1 = prices.map(x => {
+                    return this.$EthTools.web3.utils.toWei(String(x.priceValue));
+                });
+                this.weiPrices = map1;
+            },
+            resetStates: function(data){
+                this.xmpAction ='saving';
+                this.hashAction = 'saving';
+                this.ethAction = 'saving';
+                this.currentAction = 0;
+            },
+            applyLicense: function(){
+                this.currentStage = 0;
+                const md5File = require('md5-file/promise')
+                let contractJson = require('../../../build/contracts/Licenses.json');
+                let contractAddress = this.$EthTools.contractAddress;
+                let licenseContract = new this.$EthTools.web3.eth.Contract(contractJson.abi, contractAddress);
+                let accounts = this.$store.getters['Wallet/accounts'];
+                let address = accounts[this.selectedAccountIndex].accountObject.address;
+                this.resetStates();
+                this.xmpAction ="saving";
+                this.currentStage = 1;
+                console.log('apply license called');
+                xmpTools.writeAsync(this.path, this.rdfData)
+                .then((path)=>{
+                    this.currentStage = 2;
                     this.actionIndex = 0;
                     this.showLoader = false;
-                    console.log('yes');
+                    this.xmpAction = 'done';
+                    return md5File(path);
                 })
-                .catch(e =>{
-                    console.log(e);
-                });
+                .then(hash=>{
+                    this.currentStage = 3;
+                    this.hash = hash;
+                    this.hashAction =  'done';
+                    let hexHash = this.$EthTools.web3.utils.asciiToHex(this.hash);
+                    console.log('hash:' + hexHash);
+                    let res = false;
+                    //alert(address);
+                    //res = licenseContract.methods.test().call({from: address, gasPrice: '20000000000000', gas: 5000000 });
+                    res = licenseContract.methods.addFile(hexHash,this.weiPrices).call({from: address, gasPrice: '20000000000000', gas: 5000000 });
+                    //alert(res);
+                    return res;
+
+                    // return licenseContract.methods.addFile(hexHash,this.weiPrices).call({from: accounts[this.selectedAccountIndex].private, gasPrice: '20000000000000', gas: 5000000 });
+                })
+                .then((result)=>{
+                    console.log('eth result:' + result);
+                    this.ethAction =  'done';
+                })
+                .catch( e=>{
+                  console.log('error occured');
+                  console.log(e);  
+                })
             }
         },
         computed: {
@@ -117,11 +182,18 @@
                 selectedAccountIndex: 0,
                 path: null,
                 rdf: null,
+                rdfData: null,
                 actionIndex: 0,
-                actions: ['file-drop', 'display-license', 'new-license', 'saving-license'],
+                actions: ['file-drop', 'display-license', 'new-license'],
                 licenseObj: null,
-                showLoader: false,
-                showDialog: false
+                showLoader: true,
+                showDialog: false,
+                currentStage: 0,
+                xmpAction: 'saving',
+                hashAction: 'saving',
+                ethAction: 'saving',
+                hash:'',
+                weiPrices: null
             }
         }
 	}

@@ -56,12 +56,13 @@
     export default {
         name: 'display-license',
         components: { FilenameBanner, CloseBar },
-        props: ['path'],
+        props: ['path', 'selectedAccountIndex'],
         computed: {
 
         },
         methods: {
             closeEmited: function(){
+                this.fileName = '';
                 this.$emit("close", true);
             },
             prices: function(){
@@ -72,21 +73,45 @@
             },
             print: function(i){
                 console.log(i);
-            }
+            },
+            processFile: function(){
+                console.log('version: ' + this.$EthTools.web3.version);
+                console.log('processing display file');
+                const md5File = require('md5-file/promise')
+                let contractJson = require('../../../../build/contracts/Licenses.json');
+                let contractAddress = this.$EthTools.contractAddress;
+                let licenseContract = new this.$EthTools.web3.eth.Contract(contractJson.abi, contractAddress);
+                let accounts = this.$store.getters['Wallet/accounts'];
+                let address = accounts[this.accountIndex].accountObject.address;
+                md5File(this.fileName)
+                .then((hash)=>{
+                    console.log('hash is: ' + hash);
+                    let bytesHash = this.$EthTools.web3.utils.asciiToHex(hash);
+                    return licenseContract.methods.isOwner(bytesHash).call({from: address, gasPrice: '20000000000000', gas: 5000000 });
+                })
+                .then((res)=>{
+                    alert('is owner: ' + res);
+                })
+                .catch((e)=>{
+                    console.log(e);
+                })
+            },
         },
         created: function(){
             this.prices = this.licenseObj.prices.map((v,idx)=>{
               v.idx = idx;
               return v;
             })
+            this.processFile();
         },
         data: function(){
             return {
                 fileName: this.path,
                 licenseObj: this.$store.getters['Licenses/current'],
                 ethInDollars: this.$EthTools.price_usd,
+                accountIndex: this.selectedAccountIndex
             }
-        }
+        },
     }
 </script>
 <style scoped lang="scss">

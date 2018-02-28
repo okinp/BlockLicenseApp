@@ -156,6 +156,7 @@
                 var end = `   </rdf:Description></rdf:RDF>`;
                 var final = start+middle+end;
                 this.$emit("rdf", final);
+                this.$emit("prices",this.license.prices);
             },
             applyLicense: function(){
                 if ( this.saveCustomLicense ){
@@ -164,7 +165,7 @@
                     this.licenseKey === '1' ? this.$store.commit('Licenses/ADD_CLOSED_LICENSE', this.license):this.$store.commit('Licenses/ADD_OPEN_LICENSE', this.license);
                 }
                 this.generateRDF();
-                this.$emit("close", true);
+                //this.$emit("close", true);
             },
             generateId: function(){
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
