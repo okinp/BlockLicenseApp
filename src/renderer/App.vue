@@ -6,24 +6,25 @@
 </template>
 
 <script>
+  // test.default.utils();
   import HeaderNav from './components/Common/HeaderNav'
   export default {
     name: 'blocklicenseapp',
     components: {HeaderNav},
     methods: {
       getBalanceEth: function(idx){
-          let w = this.$store.getters['Wallet/accountAtIndex'](idx);
-          let address = w.accountObject.address;
-          let balance = this.$EthTools.web3.eth.getBalance(String(address))
-          .then( res => {
-            var balanceToSet =  parseFloat(this.$EthTools.web3.utils.fromWei(res,'ether')).toFixed(4);
+          let account = this.$store.getters['Wallet/accountAtIndex'](idx);
+          this.$evm.getBalanceFromAccount(account)
+          .then( (res)=>{
             let data = {
               index: idx,
-              balance: parseFloat(this.$EthTools.web3.utils.fromWei(res,'ether')).toFixed(4)
+              balance: this.$evm.convertToEth(res)
             }
             this.$store.commit('Wallet/SET_ETH_BALANCE', data);
           })
-          .catch(err=>console.log(err.message));
+          .catch( (err)=>{
+            console.log(err.message);
+          })
       },
       getBalances: function(){
         let numAccounts = this.$store.getters['Wallet/accounts'].length;

@@ -39,9 +39,7 @@ export default {
             showDialog: false,
             rules: {
                 validateValue: (value) =>{
-                  if (value==null || value==''){
-                    //this.valid = false;
-                    //return true;                    
+                  if (value==null || value==''){                   
                     return 'Value cannot be empty';
                   }
                   var m = (/[\d]+(\.[\d]+)?/).exec(value);
@@ -53,9 +51,9 @@ export default {
                   if (m[0].length != value.length) {
                     return 'Enter a number';
                   }
-                  let valueInWei = this.$EthTools.web3.utils.toWei(String(this.value));
+                  let valueInWei = this.$evm.toWei(this.value);
                   let balanceEth = this.$store.getters['Wallet/accounts'][this.selectedIndex].balance.eth;
-                  let balanceEthWei = this.$EthTools.web3.utils.toWei(String(balanceEth));
+                  let balanceEthWei = this.$evm.toWei(balanceEth);
                   if ( (balanceEthWei - 42000) >= valueInWei )
                   {
                     return true;
@@ -64,19 +62,19 @@ export default {
                   }
                 },
                 validatePublicKey: function(value){
-                    if (value== null )
-                    {
-                      return true;
-                    }
-                    const ethUtil = require('ethereumjs-util');
-                    var isValid = false;
-                    try {
-                        isValid = ethUtil.isValidAddress(value);
-                    }
-                    catch(err) {
-                        isValid = false;
-                    }
-                    return isValid? true:'Invalid Address'
+                    // if (value== null )
+                    // {
+                    //   return true;
+                    // }
+                    // const ethUtil = require('ethereumjs-util');
+                    // var isValid = false;
+                    // try {
+                    //     isValid = ethUtil.isValidAddress(value);
+                    // }
+                    // catch(err) {
+                    //     isValid = false;
+                    // }
+                    return this.$evm.isValidAddress(value)? true:'Invalid Address'
                 }
             }
         }
@@ -84,19 +82,12 @@ export default {
   methods: {
     performTransfer: function(){ 
       console.log('Index is: ' + this.selectedIndex);
-      this.$EthTools.web3.eth.sendTransaction({ from: this.selectedIndex,
-                                       to: this.publicKey,
-                                       gas: 22000,
-                                       value: this.$EthTools.web3.utils.toWei(String(this.value))
-                                     })
-      .then(function(receipt){
-          //console.log(receipt);
-      })
-      .then(()=>{
-        this.publicKey = this.value = null;
+      this.$evm.sendEther(this.selectedIndex, this.publicKey, this.value)
+      .then( (receipt)=>{
+        console.log(receipt);
+        this.publicKey = this.value = null
       })
       .catch((err)=>{
-        console.log("Catched Error");
         console.log(err.message);
       })
     },

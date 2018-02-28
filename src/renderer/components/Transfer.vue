@@ -1,7 +1,7 @@
 <template>
     <div class="main-content">
 		<wallet-selector @selectedAccount="setSelectedAccount"/>
-        <component :is="getComponent" :selectedIndex="selectedIndex"></component>
+        <transfer-form :selectedIndex="selectedIndex"></transfer-form>
     </div>
 </template>
 <style scoped>
@@ -21,20 +21,12 @@
 <script>
     import WalletSelector from './IndexPage/WalletSelector'
 	import TransferForm from './TransferPage/TransferForm'
-    import BuyForm from './TransferPage/BuyForm'
 	export default {
 		name: 'transfer',
-		components: { WalletSelector, TransferForm, BuyForm },
+		components: { WalletSelector, TransferForm },
         methods: {
             setSelectedAccount: function(x){
                 this.selectedIndex = x;
-            }
-        },
-        computed: {
-            getComponent: function(){
-//                console.log('getComponent')
-//                console.log(this.display)
-                return this.transfer=='0'?'transfer-form':'buy-form'; 
             }
         },
         data: function(){

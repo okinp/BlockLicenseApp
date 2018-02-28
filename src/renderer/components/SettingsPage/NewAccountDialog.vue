@@ -84,14 +84,12 @@ export default {
           var account = null;
           if ( this.autoKey==='1' )
           {
-              account = this.$EthTools.web3.eth.accounts.create(this.$EthTools.web3.utils.randomHex(32));       
+              account = this.$evm.createRandomAccount();       
           } else {
-              account = this.$EthTools.web3.eth.accounts.privateKeyToAccount(this.privateKey.substring(0,2)=='0x'?this.privateKey:'0x'+this.privateKey);
+              account = this.$evm.createAccountFromPrivateKey(this.privateKey);
           }
           var w = { name: this.name, accountObject: account };
           this.$store.commit('Wallet/ADD_ACCOUNT', w);
-          this.$EthTools.wallet.add(account);
-          // this.$emit("formSubmitted", true);
           this.resetDialog();
           this.$emit("cancel", true);
       }
@@ -114,7 +112,7 @@ export default {
                     const ethUtil = require('ethereumjs-util');
                     var isValid = false;
                     try {
-                        isValid = ethUtil.isValidPrivate(Buffer.from(value,'hex'));
+                        isValid = this.$evm.isValidPrivateKey(value);
                     }
                     catch(err) {
                         isValid = false;
