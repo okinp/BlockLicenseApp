@@ -4,7 +4,6 @@
         <component  :is="getComponent"
                     :path="path" 
                     :selectedAccountIndex="selectedAccountIndex"
-                    
                     @close="closeNewLicenseEmited" 
                     @rdf="rdfEmitted"
                     @prices="pricesEmitted" 

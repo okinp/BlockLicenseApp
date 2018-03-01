@@ -87,8 +87,8 @@
                     return this.$evm.isOwner(hash, address);
                 })
                 .then((res)=>{
-                    this.isOwner = true;
-                    alert('is owner: ' + res);
+                    this.isOwner = res;
+                    //alert('is owner: ' + res);
                 })
                 .catch((e)=>{
                     console.log(e);

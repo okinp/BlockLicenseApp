@@ -73,8 +73,9 @@ var ethToolkit = (function(){
 	}
 
 	let isValidPrivateKey = function(_key){
-		let pk = Buffer.from(_key,'hex');
-		return util.isValidPrivate(pk);
+		// let pk = Buffer.from(_key,'hex');
+		// return util.isValidPrivate(pk);
+		return  util.isValidPrivate(Buffer.from(_key,'hex'));
 	}
 
 	let createRandomAccount = function(){
