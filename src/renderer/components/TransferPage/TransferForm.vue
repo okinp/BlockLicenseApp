@@ -61,7 +61,11 @@ export default {
                     return 'Not enough balance';
                   }
                 },
-                validatePublicKey: function(value){
+                validatePublicKey: (value)=>{
+                    let isValid = this.$evm.isValidAddress;
+                    console.log(isValid);
+                    let res = isValid(value);
+                    console.log(res);
                     // if (value== null )
                     // {
                     //   return true;

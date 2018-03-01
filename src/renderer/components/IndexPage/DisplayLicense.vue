@@ -15,6 +15,9 @@
                 <p>{{licenseObj.workTitle?licenseObj.workTitle:'Untitled Work'}}</p>
                 <p>{{ licenseObj.licenseType == 1 ? 'ClosedLicense' : 'OpenLicense' }}</p>
             </div>
+            <div class="ownerInfo" v-if="isOwner">
+                <p>You own the file!</p>
+            </div>
         </div>
         <div class="description" v-if="licenseObj.description">
             <div class="descriptionHeader">
@@ -75,21 +78,16 @@
                 console.log(i);
             },
             processFile: function(){
-                console.log('version: ' + this.$EthTools.web3.version);
-                console.log('processing display file');
                 const md5File = require('md5-file/promise')
-                let contractJson = require('../../../../build/contracts/Licenses.json');
-                let contractAddress = this.$EthTools.contractAddress;
-                let licenseContract = new this.$EthTools.web3.eth.Contract(contractJson.abi, contractAddress);
                 let accounts = this.$store.getters['Wallet/accounts'];
                 let address = accounts[this.accountIndex].accountObject.address;
+                console.log("addres: " + address);
                 md5File(this.fileName)
                 .then((hash)=>{
-                    console.log('hash is: ' + hash);
-                    let bytesHash = this.$EthTools.web3.utils.asciiToHex(hash);
-                    return licenseContract.methods.isOwner(bytesHash).call({from: address, gasPrice: '20000000000000', gas: 5000000 });
+                    return this.$evm.isOwner(hash, address);
                 })
                 .then((res)=>{
+                    this.isOwner = true;
                     alert('is owner: ' + res);
                 })
                 .catch((e)=>{
@@ -98,6 +96,7 @@
             },
         },
         created: function(){
+            this.isOwner = false;
             this.prices = this.licenseObj.prices.map((v,idx)=>{
               v.idx = idx;
               return v;
@@ -108,8 +107,9 @@
             return {
                 fileName: this.path,
                 licenseObj: this.$store.getters['Licenses/current'],
-                ethInDollars: this.$EthTools.price_usd,
-                accountIndex: this.selectedAccountIndex
+                ethInDollars: this.$price_usd,
+                accountIndex: this.selectedAccountIndex,
+                isOwner: false
             }
         },
     }
@@ -129,7 +129,7 @@
         box-sizing: border-box;
         padding: 0 24px;
         padding-bottom: 31px;
-        .labels, .data {
+        .labels, .data, .ownerInfo {
             dislay: flex;
             flex-direction: column;
         }
@@ -137,7 +137,14 @@
             width: 20%;
         }
         .data {
-            width: 80%;
+            width: 60%;
+        }
+        .ownerInfo {
+            width: 20%;
+            align-self: center;
+            p {
+                font-weight: 500;
+            }
         }
         p {
             margin-bottom: 5px;

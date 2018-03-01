@@ -8,41 +8,41 @@ contract Licenses {
 		mapping( address => uint8[]) buyers;
 	}
 
-	mapping( bytes32 => File) public store;
+	mapping( bytes16 => File) public store;
 
-	function addFile( bytes32 hash, uint256[] prices) public returns (bytes32)
+	function addFile( bytes16 hash, uint256[] prices) public returns (bytes16)
 	{
-		File storage f = store[hash];
+		File memory f = store[hash];
 		require ( f.owner == address(0) );
 		store[hash] = File(msg.sender, prices);
 		return hash;
 	}
 
-	function buyFile(bytes32 hash, uint8 priceId ) public payable
+	function buyFile(bytes16 hash, uint8 priceId ) public payable
 	{
-		File storage f = store[hash];
+		File memory f = store[hash];
 		require( f.owner != msg.sender );
 		require( priceId <= f.prices.length -1 );
 		require( f.prices[priceId] == msg.value);
-		f.buyers[msg.sender].push(priceId);
+		store[hash].buyers[msg.sender].push(priceId);
+		//f.buyers[msg.sender].push(priceId);
 	}
 
-	function getBought(bytes32 hash) public view returns (uint8[])
+	function getBought(bytes16 hash) public view returns (uint8[])
 	{
 		File storage f = store[hash];
 		require( f.owner != msg.sender );
 		return f.buyers[msg.sender];
 	}
 
-	function isOwner(bytes32 hash) public view returns (bool)
+	function isOwner(bytes16 hash) public view returns (bool)
 	{
-		File storage f = store[hash];
+		File memory f = store[hash];
 		//require ( f.owner != address(0));
-		bool returnValue = false;
 		if ( f.owner == msg.sender){
-			returnValue = true;
+			return true;
 		}
-		return returnValue;
+		return false;
 	}
 
 	function test() public pure returns (bool)

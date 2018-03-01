@@ -1,7 +1,10 @@
 <template>
     <div class="main-content">
 		<wallet-selector @selectedAccount="setSelectedAccount"/>
-        <component :is="getComponent" :path="path" :selectedAccountIndex="selectedAccountIndex"
+        <component  :is="getComponent"
+                    :path="path" 
+                    :selectedAccountIndex="selectedAccountIndex"
+                    
                     @close="closeNewLicenseEmited" 
                     @rdf="rdfEmitted"
                     @prices="pricesEmitted" 
@@ -19,7 +22,6 @@
 <style scoped>
     .main-content { 
         width: 100%;
-/*        height: 100%;*/
         flex-grow: 1;
         display: flex;
         flex-direction: column;
@@ -115,11 +117,7 @@
                 this.rdfData = data;
             },
             pricesEmitted: function(data){
-                let prices = data;
-                const map1 = prices.map(x => {
-                    return this.$EthTools.web3.utils.toWei(String(x.priceValue));
-                });
-                this.weiPrices = map1;
+                this.prices = data;
             },
             resetStates: function(data){
                 this.xmpAction ='saving';
@@ -129,10 +127,6 @@
             },
             applyLicense: function(){
                 this.currentStage = 0;
-                const md5File = require('md5-file/promise')
-                let contractJson = require('../../../build/contracts/Licenses.json');
-                let contractAddress = this.$EthTools.contractAddress;
-                let licenseContract = new this.$EthTools.web3.eth.Contract(contractJson.abi, contractAddress);
                 let accounts = this.$store.getters['Wallet/accounts'];
                 let address = accounts[this.selectedAccountIndex].accountObject.address;
                 this.resetStates();
@@ -145,22 +139,13 @@
                     this.actionIndex = 0;
                     this.showLoader = false;
                     this.xmpAction = 'done';
+                    const md5File = require('md5-file/promise')
                     return md5File(path);
                 })
                 .then(hash=>{
                     this.currentStage = 3;
-                    this.hash = hash;
-                    this.hashAction =  'done';
-                    let hexHash = this.$EthTools.web3.utils.asciiToHex(this.hash);
-                    console.log('hash:' + hexHash);
-                    let res = false;
-                    //alert(address);
-                    //res = licenseContract.methods.test().call({from: address, gasPrice: '20000000000000', gas: 5000000 });
-                    res = licenseContract.methods.addFile(hexHash,this.weiPrices).call({from: address, gasPrice: '20000000000000', gas: 5000000 });
-                    //alert(res);
-                    return res;
-
-                    // return licenseContract.methods.addFile(hexHash,this.weiPrices).call({from: accounts[this.selectedAccountIndex].private, gasPrice: '20000000000000', gas: 5000000 });
+                    this.hashAction =  'done'; 
+                    return this.$evm.addFile(hash, this.prices, address);
                 })
                 .then((result)=>{
                     console.log('eth result:' + result);
@@ -193,7 +178,7 @@
                 hashAction: 'saving',
                 ethAction: 'saving',
                 hash:'',
-                weiPrices: null
+                prices: null
             }
         }
 	}
