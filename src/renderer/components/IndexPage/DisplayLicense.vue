@@ -94,7 +94,7 @@
                 md5File(this.fileName)
                 .then((hash)=>{
                     this.hash = hash;
-                    console.log("addres: " + this.address);
+                    // console.log("addres: " + this.address);
                     return Promise.all([this.$evm.isOwner(hash, this.address), this.$evm.getBought(hash, this.address) ])
                 })
                 .then((res)=>{
@@ -129,6 +129,12 @@
 
             }
         },
+        watch: {
+            selectedAccountIndex: function(now, before){
+                this.accountIndex = now;
+                this.processFile();
+            }
+        }
     }
 </script>
 <style scoped lang="scss">
