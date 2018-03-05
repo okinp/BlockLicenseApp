@@ -9,15 +9,15 @@
                         <v-text-field class="itemField" label="Work Title" v-model="title" :rules="rules.workTitle" required/>
                     </div>
                     <div class="item">
-                        <v-text-field class="itemField" label="Creator Name" v-model="creatorName" :rules="rules.creatorName" required />
+                        <v-text-field class="itemField" label="Name" v-model="creatorName" :rules="rules.creatorName" required />
                     </div>
                     <div class="item">
                         <v-text-field class="itemField" label="Email" v-model="email" :rules="rules.validateEmail" required />
                     </div>
                 </div>
-                <div class="details">
+<!--                 <div class="details">
                     <v-text-field label="Work Description" v-model="workDescription" :rules="rules.validateDescription" :no-resize="true" :rows="3" multi-line/>
-                </div>
+                </div> -->
             </div>
             <div class="licenseInfo">
                 <div class="settings">
@@ -44,36 +44,40 @@
                 </div>
             </div>    
         </v-form>
-        <div class="buttons">
-            <div class="item">
-                <v-btn flat class="app-btn" v-on:click="applyLicense" v-bind:class="{ 'btn--disabled': !valid}">Confirm</v-btn>
-            </div>
-            <div class="item">
-                <v-btn flat class="cancel-btn" v-on:click="closeEmited">Cancel</v-btn>
-            </div>
-        </div>
+        <button-bar :active="valid" @confirm="applyLicense" @cancel="closeEmited" :applyText="'Apply License'"></button-bar>
+        <save-dialog  :shown="showDialog" 
+                :path="path" 
+                :processingStage="currentStage"
+                :actionA="xmpAction"
+                :actionB="hashAction"
+                :actionC="ethAction" 
+                @cancel="closeDialog"
+                @process="applyLicense">Saving</save-dialog>
     </div>
 </template>
 <script>
     import FilenameBanner from './FilenameBanner'
     import CloseBar from '../Common/CloseBar'
+    import ButtonBar from '../Common/ButtonBar'
     import PricingOption from './PricingOption'
-
+    import SaveDialog from './SaveDialog'
+    import xmpTools from './xmpTools.js'
+    const JXON = require('jxon')
     export default {
         name: 'new-license',
-        components: { FilenameBanner, CloseBar, PricingOption },
-        props: ['path'],
+        components: { FilenameBanner, CloseBar, ButtonBar, PricingOption, SaveDialog },
+        props: ['path', 'selectedAccountIndex'],
         computed: {
             licenseItems: function(){
                 var licenses = null
                 if ( this.licenseKey === '1') {
                  licenses = this.$store.getters['Licenses/closedLicenses'];
-                 console.log(licenses);
+                 //console.log(licenses);
                 } else {
                  licenses = this.$store.getters['Licenses/openLicenses'];
                 }
-                                 console.log('the licenses')
-                 console.log(licenses)
+                                 //console.log('the licenses')
+                 //console.log(licenses)
                 var newList = [{text: '+Create License', value: 0}] 
                 var json = require('./defaultLicenses.json');
                 let jsonList = json.map(function(x,idx){
@@ -96,7 +100,7 @@
                 delete require.cache[require.resolve('./defaultLicenses.json')]
                 const json = require('./defaultLicenses.json');
                 let jsonLength = json.length;
-                console.log("json length: " + json.length + " index: " + x);
+                //console.log("json length: " + json.length + " index: " + x);
 
                 if ( this.selectedIndex == 0 ){
                      this.license = {
@@ -109,16 +113,16 @@
                 } else if ( this.selectedIndex > 0 && (this.selectedIndex <= json.length) )
                 {
                     this.license = json[this.selectedIndex - 1];
-                    console.log(this.license);
+                    //console.log(this.license);
                 }
                 else {
-                    console.log('get closed licenses');
+                    //console.log('get closed licenses');
                     let getter = 'Licenses/openLicenses'
                     if (this.licenseKey==='1'){
                         getter = 'Licenses/closedLicenses'   
                     }
                     let licenses = this.$store.getters[getter];
-                    console.log(licenses);
+                    //console.log(licenses);
 
                     this.license = JSON.parse(JSON.stringify(licenses[x-jsonLength - 1]));
                 } 
@@ -126,6 +130,10 @@
             closeEmited: function(){
                 //console.log(this.license);
                 this.$emit("close", true);
+            },
+            closeDialog: function(){
+                this.showDialog = false;
+                this.closeEmited();
             },
             generateRDF: function(){
                 var xmlescape = require('xml-escape');
@@ -155,8 +163,12 @@
                 middle+=`</rdf:Bag></block:pricenames>`
                 var end = `   </rdf:Description></rdf:RDF>`;
                 var final = start+middle+end;
-                this.$emit("rdf", final);
-                this.$emit("prices",this.license.prices);
+                this.rdf = final;
+                this.prices = this.license.prices;
+                // console.log(this.prices);
+                this.showDialog = true;
+                // this.$emit("rdf", final);
+                // this.$emit("prices",this.license.prices);
             },
             applyLicense: function(){
                 if ( this.saveCustomLicense ){
@@ -166,6 +178,38 @@
                 }
                 this.generateRDF();
                 //this.$emit("close", true);
+                let accounts = this.$store.getters['Wallet/accounts'];
+                let address = accounts[this.selectedAccountIndex].accountObject.address;
+                //console.log(address);
+                this.resetStates();
+                this.xmpAction ="saving";
+                this.currentStage = 1;
+                xmpTools.writeAsync(this.fileName, this.rdf)
+                .then((path)=>{
+                    this.currentStage = 2;
+                    this.actionIndex = 0;
+                    this.showLoader = false;
+                    this.xmpAction = 'done';
+                    const md5File = require('md5-file/promise')
+                    return md5File(path);
+                })
+                .then(hash=>{
+                    this.currentStage = 3;
+                    this.hashAction =  'done';
+                    return this.$evm.addFile(hash, this.prices, address);
+                })
+                .then((result)=>{
+                    this.ethAction =  'done';
+                })
+                .catch( e=>{
+                  console.log(e);  
+                })
+            },
+            resetStates: function(data){
+                this.xmpAction ='saving';
+                this.hashAction = 'saving';
+                this.ethAction = 'saving';
+                this.currentAction = 1;
             },
             generateId: function(){
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -178,7 +222,7 @@
                 this.license.prices.push(p);
             },
             removePricingOption: function(idx){
-                console.log(idx);
+                //console.log(idx);
                 if (this.license.prices.length > 1){
                   this.license.prices.splice(idx, 1);
                 }
@@ -206,6 +250,15 @@
                 priceValue: '',
                 valid: false,
                 contractAddress: '',
+                showDialog: false,
+                currentStage: 1,
+                xmpAction: 'saving',
+                hashAction: 'saving',
+                ethAction: 'saving',
+                hash:'',
+                prices: null,
+                rdf: '',
+                prices: null,
                 rules: {
                     workTitle:                     
                     [ (v) => !!v || 'Title is required',
@@ -331,7 +384,7 @@
                         display:block;
                         height: 100%;
                         line-height: 60px;
-                        color: #b8bbc0;
+                        color: #3857B9;
                     }
                 }
             }

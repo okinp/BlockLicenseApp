@@ -34,9 +34,6 @@ var sz = accts.length;
 for (var i=0; i<sz; i++){
     evm.addAccount(accts[i]);
 }
-console.log('-----------');
-console.log(evm.web3);
-console.log(evm.getWeb3());
 Vue.prototype.$evm = evm;
 
 //let axios = require('axios');

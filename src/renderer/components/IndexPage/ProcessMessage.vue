@@ -1,13 +1,13 @@
 <template>
 	<div class="processMessage">
 		<div class="messageContainer">
-			<p>{{text}}</p>
 		    <div class="processIcon">
 		    	<i v-if='action ==="loading"' class='fa fa-circle-o-notch fa-spin'></i>
 		    	<i v-else-if='action ==="saving"' class='fa fa-gear fa-spin'></i>
 		    	<i v-else-if='action ==="done"' class='fa fa-check'></i>
 				<i v-else class='fa fa-exclamation-circle'></i>
 		    </div>
+		    <p>{{text}}</p>
 		</div>
 	</div>
 </template>
@@ -48,13 +48,13 @@
 		        color: #8F949D;
 		        font-size: 18px;
 		        font-weight: 300;
-		        text-align: right;
+		        text-align: left;
 			}
 			.processIcon {
 				width: 35%;
-				padding-left: 15px;
+				padding-right: 15px;
 				display: flex;
-				justify-content: flex-start;
+				justify-content: flex-end;
 				height: 24px;
 				i {
 					display: block;

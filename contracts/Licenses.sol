@@ -31,18 +31,26 @@ contract Licenses {
 	function getBought(bytes16 hash) public view returns (uint8[])
 	{
 		File storage f = store[hash];
-		require( f.owner != msg.sender );
-		return f.buyers[msg.sender];
+		uint8[] storage paidOptions = f.buyers[msg.sender];
+		//require( f.owner != msg.sender );
+		return paidOptions;
 	}
 
 	function isOwner(bytes16 hash) public view returns (bool)
 	{
-		File memory f = store[hash];
+		File memory f = store[hash]; 
 		//require ( f.owner != address(0));
 		if ( f.owner == msg.sender){
 			return true;
 		}
 		return false;
+	}
+
+	function getPrices(bytes16 hash) public view returns (uint256 [] )
+	{
+		File memory f = store[hash];
+		// uint256[] memory prices = new uint256[](1);
+		return f.prices;
 	}
 
 	function test() public pure returns (bool)

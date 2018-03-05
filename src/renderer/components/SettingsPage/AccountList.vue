@@ -1,13 +1,13 @@
 <template>
     <div class="accounts">
         <h1 class="text-center">Accounts</h1>
-        <div class="text-right" id="add-account" v-bind:class="{ hidden: !isHidden }">
-            <a href="#" v-on:click="newAccount">+ ADD ACCOUNT</a>
+        <div class="text-right" id="add-account">
+            <a href="#" v-on:click="showNewAccountForm">+ ADD ACCOUNT</a>
         </div>
         <div id="account-list">   
-            <account :accountData="w" :accountIndex="idx" @editAccount="editAccount" @deleteAccount="deleteAccount" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(w,idx) in accounts" :key="idx"></account>
+            <account :accountData="account" :accountIndex="idx" @editAccountPressed="showEditAccountForm" @deleteAccountPressed="showDeleteAccountForm" @accountIndex="setAccountIndex" :class="{hidden: accountListIsEmpty}"  v-for="(account,idx) in accounts" :key="idx"></account>
         </div>
-        <account-dialog :shown="showDialog" :resetForm="resetForm" :dialogOption="getDialogOption" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="acceptDelete"></account-dialog>
+        <account-dialog :visible="this.dialogIsShown" :dialogOption="getDialogOption" :accountIndex="accountIndex" @hide="hideDialog"></account-dialog>
     </div>
 </template>
 <script>
@@ -23,47 +23,28 @@
             accountListIsEmpty: function(){
                 return this.$store.getters['Wallet/accounts'].length === 0 ? true:false;
             },
-            getComponent: function(){
-//                console.log(this.isEdit?'edit-account':'new-account');
-                return this.isEdit?'edit-account':'new-account'
-            },
             getDialogOption: function(){
                 return this.actions[this.action];
             }
         },
         methods: {
-            closeEmited: function(){
-                this.isHidden = true;
-                this.isEdit = false;
-            },
-            newAccount: function(){
-                this.action = 1;
-                this.resetForm = false;
-                this.showDialog = true;
-            },
-            show: function(){
-              this.isHidden = false  
-            },
-            editAccount: function(){
-                this.action = 2;
-                this.isEdit = true;
-                this.resetForm = false;
-                this.showDialog = true;
-            },
-            deleteAccount: function(){
+            showDeleteAccountForm: function(){
                 this.action = 0;
-                this.showDialog = true;
+                this.showDialog();
             },
-            submitForm: function(){
-                this.isHidden = true;
-                this.isEdit = false;
+            showNewAccountForm: function(){
+                this.action = 1;
+                this.showDialog();
             },
-            cancelDialog: function(){
-                this.showDialog = false;
-                this.resetForm = true;
+            showEditAccountForm: function(){
+                this.action = 2;
+                this.showDialog();
             },
-            acceptDelete: function(){
-                this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
+            showDialog: function(){
+                this.dialogIsShown = true;  
+            },
+            hideDialog: function(){
+                this.dialogIsShown = false;
             },
             setAccountIndex: function(idx){
                 this.accountIndex = idx;
@@ -71,13 +52,10 @@
         },
         data() {
             return {
-                isHidden: true,
-                isEdit: false,
-                showDialog: false,
-                resetForm: false,
                 action: 0,
                 actions: ['confirm-delete-dialog', 'new-account-dialog','edit-account-dialog'],
-                accountIndex: null
+                accountIndex: null,
+                dialogIsShown: false,
             }
         }
     }
@@ -86,6 +64,9 @@
 <style lang="scss" scoped>
 
 .accounts {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
     #add-account {
         width: 100%;
         height: 60px;
@@ -103,13 +84,12 @@
             display:block;
             height: 100%;
             line-height: 60px;
-            color: #b8bbc0;
+            color: #3857B9;
         }
     }
     #account-list {
-        min-height: 644px;
-        max-height: 644px;
-        overflow-y: auto;
+        height: 100%;
+        flex-grow: 1;
         padding-top: 0;
         padding-bottom: 0px;
     }

@@ -44,7 +44,7 @@ const mutations = {
       }
   },
   ADD_ACCOUNT: function(state, w){
-      var newAccount = {name: w.name, balance: { eth: 0, blt: 0}, primary: false, edit: false, accountObject: w.accountObject };
+      var newAccount = {name: w.name, balance: { eth: '0.0000', lcn: '0.0000'}, primary: false, edit: false, accountObject: w.accountObject };
       if (!state.accounts.length )
           newAccount.primary = true;
       state.accounts.push(newAccount);
@@ -106,6 +106,17 @@ const getters = {
   accountAtIndex: function(state){
     let accounts = state.accounts;
     return idx => { return accounts[idx] };
+  },
+  nameAtIndex: function(state){
+    let accounts = state.accounts;
+    return idx => {
+      if (state.accounts.length > idx ) {
+        return state.accounts[idx].name; 
+      }
+       else {
+        return "";
+      }
+    }
   }
 }
 

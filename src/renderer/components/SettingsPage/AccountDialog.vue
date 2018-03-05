@@ -1,33 +1,45 @@
 <template>
-  <v-dialog persistent v-model="shown" min-width="500px" max-width="612px" class="acountDialog">
+  <v-dialog v-model="isVisible" class="bl-dialog" persistent>
       <v-card>
-         <component class="dialog-s" :is="dialogOption" :showDialog="shown" :accountIndex="accountIndex" @cancel="cancelDialog" @delete="deleteAccount"></component>
+        <close-bar @close="hide"></close-bar>
+        <component :is="option" :accountIndex="accountIndex" @hide="hide"></component>
       </v-card>
   </v-dialog>
 </template>
 <script>
-  import CloseBar from '../Common/CloseBar';
+
+  import CloseBar from '../Common/CloseBar'
   import ConfirmDeleteDialog from './ConfirmDeleteDialog';
   import NewAccountDialog from './NewAccountDialog';
   import EditAccountDialog from './EditAccountDialog';
+  import ButtonBar from '../Common/ButtonBar';
   export default {
     name: "account-dialog",
-    props: ['shown', 'dialogOption', 'accountIndex'],
-    components: { CloseBar, ConfirmDeleteDialog, NewAccountDialog, EditAccountDialog },
+    props: ['visible', 'dialogOption', 'accountIndex'],
+    components: { CloseBar, ConfirmDeleteDialog, NewAccountDialog, EditAccountDialog, ButtonBar },
     methods: {
-      cancelDialog: function(){
-        this.$emit("cancel", true);
+      hide: function(){
+        this.$emit("hide", true);
       },
-      deleteAccount: function(){
-        this.$emit("delete", true);
+    },
+    data(){
+      return {
+        isVisible: this.visible,
+        option: this.dialogOption
       }
     },
+    watch: {
+      visible: function(now, before){
+        this.isVisible = now;
+      },
+      dialogOption: function(now, before){
+        this.option = now;
+      }
+    }
   }
 </script>
-<style scoped>
- .dialog-s {
-
- }
-
-
+<style lang="scss">
+  .dialog {
+    width: 65% !important;
+  }
 </style>

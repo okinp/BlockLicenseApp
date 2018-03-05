@@ -57,7 +57,6 @@
 
   .card {
     ul.list {
-      background-color: #EEF2F6;
       .list__tile__title {
         color: dimgray;
       }

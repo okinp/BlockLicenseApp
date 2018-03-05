@@ -15,9 +15,6 @@
                 <p>{{licenseObj.workTitle?licenseObj.workTitle:'Untitled Work'}}</p>
                 <p>{{ licenseObj.licenseType == 1 ? 'ClosedLicense' : 'OpenLicense' }}</p>
             </div>
-            <div class="ownerInfo" v-if="isOwner">
-                <p>You own the file!</p>
-            </div>
         </div>
         <div class="description" v-if="licenseObj.description">
             <div class="descriptionHeader">
@@ -37,8 +34,11 @@
                     <h3>{{price.name}}</h3>
                     <p><span class="amount">{{price.value}}ETH</span><span class="amountDollars"> - ABOUT ${{price.value*ethInDollars}}</span></p>
                 </div>
-                <div class="buy">
-                    <v-btn class="app-btn buy" v-on:click="print(price.idx)" flat>BUY LICENSE</v-btn>
+                <div class="buy" v-if="!boughtOptions.includes(price.idx)">
+                    <v-btn class="app-btn buy" v-on:click="buy(price.idx)" v-bind:class="{ 'btn--disabled': isOwner}" flat>BUY LICENSE</v-btn>
+                </div>
+                <div class="buy" v-else>
+                    <p>You own this license</p>
                 </div>
             </div>
         </div>
@@ -56,9 +56,10 @@
 <script>
     import FilenameBanner from './FilenameBanner'
     import CloseBar from '../Common/CloseBar'
+    import ButtonBar from '../Common/ButtonBar'
     export default {
         name: 'display-license',
-        components: { FilenameBanner, CloseBar },
+        components: { FilenameBanner, CloseBar, ButtonBar },
         props: ['path', 'selectedAccountIndex'],
         computed: {
 
@@ -74,21 +75,33 @@
                   return v;
               })
             },
-            print: function(i){
-                console.log(i);
+            buy: function(i){
+                let priceOptions = this.licenseObj.prices;
+                let currentPrice = priceOptions[i].value;
+                this.$evm.buyFile(this.hash, this.address, currentPrice,i)
+                .then((res)=>{
+                    console.log('Bought Option: ', i);
+                    this.boughtOptions.push(i);
+                })
+                .catch((e)=>{
+                    console.log(e);
+                })
             },
             processFile: function(){
                 const md5File = require('md5-file/promise')
                 let accounts = this.$store.getters['Wallet/accounts'];
-                let address = accounts[this.accountIndex].accountObject.address;
-                console.log("addres: " + address);
+                this.address = accounts[this.accountIndex].accountObject.address;
                 md5File(this.fileName)
                 .then((hash)=>{
-                    return this.$evm.isOwner(hash, address);
+                    this.hash = hash;
+                    console.log("addres: " + this.address);
+                    return Promise.all([this.$evm.isOwner(hash, this.address), this.$evm.getBought(hash, this.address) ])
                 })
                 .then((res)=>{
-                    this.isOwner = res;
-                    //alert('is owner: ' + res);
+                    //console.log(res);
+                    this.isOwner = res[0];
+                    //var arrayOfNumbers = arrayOfStrings.map(Number);
+                    this.boughtOptions = res[1].map(Number); 
                 })
                 .catch((e)=>{
                     console.log(e);
@@ -109,12 +122,26 @@
                 licenseObj: this.$store.getters['Licenses/current'],
                 ethInDollars: this.$price_usd,
                 accountIndex: this.selectedAccountIndex,
-                isOwner: false
+                isOwner: false,
+                hash: '',
+                address: '',
+                boughtOptions: []
+
             }
         },
     }
 </script>
 <style scoped lang="scss">
+    .description {
+        .descriptionHeader{
+            h2 {
+                font-size: 18px;
+                color: #666e7a;
+                line-height: 45px;
+                margin: 0;
+            }
+        }
+    }
 
     .closeBar{
         background-color: white;
@@ -211,6 +238,20 @@
                     height: 43px;
                     width: 120px;
                     border-radius: 5px;
+                }
+                .app-btn {
+                    background-color: #3857b9 !important;
+                    color: white;
+                }
+                .app-btn.btn--disabled {
+                    opacity: 0.5;
+                    .btn__content {
+                      color: white !important;
+                    }
+                }
+                p {
+                    color: #666E7A;
+                    padding-right: 10px;
                 }
             }
         }

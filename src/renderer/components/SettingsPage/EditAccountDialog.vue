@@ -1,6 +1,5 @@
 <template>
 <div>
-  <close-bar @close="cancelDialog"></close-bar>
   <v-form v-model="valid" ref="editAccountForm">
       <v-container fluid id="account-list">
           <v-layout row wrap>
@@ -15,16 +14,9 @@
                   <v-text-field label="Public Key" v-model="publicKey" disabled></v-text-field>
               </v-flex>
           </v-layout>
-          <v-layout row wrap>
-            <v-flex xs12 class="text-center">
-                <v-btn flat class="app-btn" v-on:click="updateAccount" v-bind:class="{ 'btn--disabled': !valid}">Update</v-btn>
-            </v-flex>
-            <v-flex xs12 class="text-center">
-                <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
-            </v-flex>
-          </v-layout>
       </v-container>
   </v-form>
+  <button-bar :active="valid" @confirm="updateAccount" @cancel="cancelDialog" :applyText="'Update'"></button-bar>
 </div>
 </template>
 <style lang="scss" scoped>
@@ -46,19 +38,18 @@
   }
 </style>
 <script>
-import CloseBar from '../Common/CloseBar';
+import ButtonBar from '../Common/ButtonBar';
 export default {
 	name: 'edit-account-dialog',
   props: ['accountIndex', 'showDialog' ],
-  components: { CloseBar },
+  components: { ButtonBar },
   methods: {
     updateAccount: function(){
       this.$store.commit('Wallet/SET_ACCOUNT_NAME_AT_INDEX', { name: this.$data.name, index: this.accountIndex});
-      this.$emit("cancel", true);
+      this.$emit("hide", true);
     },
     cancelDialog: function(){
-      //this.resetDialog();
-      this.$emit("cancel", true);
+      this.$emit("hide", true);
     },
     resetDialog: function(){
       this.$refs.editAccountForm.reset();
@@ -70,20 +61,27 @@ export default {
     }
   },
   data: function(){
-      return {
-          name: this.$store.getters['Wallet/editAccount'].name,
-          privateKey: this.$store.getters['Wallet/editAccount'].accountObject.privateKey,
-          publicKey: this.$store.getters['Wallet/editAccount'].accountObject.address,
-          valid: false,
-          rules: {
-              validateName: function(value){
-                  if ( value == null ){
-                    return 'Name must be at least 6 characters long';
-                  }
-                  return value.length >= 6 ? true : 'Name must be at least 6 characters long'
-              }
+    return {
+      name: this.$store.getters['Wallet/editAccount'].name,
+      privateKey: this.$store.getters['Wallet/editAccount'].accountObject.privateKey,
+      publicKey: this.$store.getters['Wallet/editAccount'].accountObject.address,
+      valid: false,
+      rules: {
+        validateName: (value)=>{
+          let res = true;
+          let txt = 'Name must be at least 6 characters long';
+          if ( value===null){
+            res = false;
           }
+          else if ( value.length < 6 ){
+            res = false;
+          } else {
+            res = true;
+          }
+          return res ? true: txt;
+        }
       }
+    }
   },
   computed: {
     getName: function(){
@@ -93,41 +91,12 @@ export default {
     }
   },
   watch: { 
-    accountIndex: function(newVal, oldVal) { // watch it
-      //console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+    accountIndex: function(newVal, oldVal) { 
       this.updateData();
     },
     showDialog: function(newVal, oldVal) { // watch it
-      //console.log('Prop changed: ', newVal, ' | was: ', oldVal)
       this.updateData();
     }
   }
-  // computed: {
-  //   updateData: function(){
-  //     if (showDialog){
-  //       this.name = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).name;
-  //       this.privateKey = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).accountObject.privateKey;
-  //       this.publicKey = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex).accountObject.publicKey;
-  //     }
-  //   },
-  // },
-  // data: function(){
-  //   let getter  = this.$store.getters['Wallet/accountAtIndex'](this.accountIndex);
-  //   this.updateData();
-  //   return {
-  //       // name: getter.name,
-  //       // privateKey: getter.accountObject.privateKey,
-  //       // publicKey: getter.accountObject.address,
-  //       name: '',
-  //       privateKey: '',
-  //       publicKey: '',
-  //       valid: false,
-  //       rules: {
-  //         validateName: function(value){
-  //             return value.length >= 6 ? true : 'Name must be at least 6 characters long'
-  //         }
-  //       }
-  //   }
-  // }
 }
 </script>

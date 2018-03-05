@@ -60,14 +60,13 @@
 <style lang="scss">
   * {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
   }
+
   html {
     overflow-y: auto;
     background-color: rgb(248, 249, 250);
-    height: 100%;
-    min-width: 1175px;
+    min-height: 600px;
     body {
       font-family: 'Ubuntu', sans-serif;
       min-height: 100%;
@@ -79,29 +78,27 @@
     width:100%; 
     padding:0; 
     margin:0; 
-    min-width: 640px;
-    min-height: 480px;
-  }
-  body {
-
+    min-width: 960px;
   }
 
 
   h1 {
     color: #8F949D;
-    margin: 50px 0 40px;
     font-size: 23px;
     font-weight: 300;
   }
+
   h2 {
-    font-size: 18px;
-    color: #666e7a;
-    line-height: 45px;
-    margin: 0;
+    color: #8F949D;
+    font-size: 21px;
+    font-weight: 100; 
   }
+
+
   .text-center {
     text-align: center;
   }
+
   #bl-app {
     width: 100%;
     height: 100%;
@@ -112,8 +109,14 @@
     align-items: stretch;
   }
   .app-btn {
-    background-color: #3857b9 !important;
+    background-color: #3857b9;
     color: white !important;
+  }
+  .app-btn.btn--disabled {
+    opacity: 0.5;
+    .btn__content {
+      color: white !important;
+    }
   }
   .cancel-btn {
     color: #3857b9 !important;

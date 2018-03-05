@@ -21,6 +21,9 @@
 <!--                 <p class="browse">
                     OR BROWSE HERE <i class="fa fa-folder-o"></i>
                 </p> -->
+            <div id="loader">        
+                <v-progress-linear :indeterminate="true" v-if="showLoader"></v-progress-linear>
+            </div>
         </div>
     </div> 
 </template>
@@ -83,11 +86,22 @@
             margin-top: 40px;
             color: #D8DCE1;
         }
+        #loader {
+            min-height: 35px;
+            display: flex;
+            flex-direction: column;
+        }
     }
 </style>
 <script>
 export default {
   name: 'file-drop',
+  data: function(){
+    return {
+        path: '',
+        showLoader: false
+    }
+  },
   mounted: function(){
     var browseFile = document.querySelector(".input-file");
     browseFile.onchange = (ev) => {
@@ -102,8 +116,15 @@ export default {
         ev.preventDefault();
 	    var items = ev.dataTransfer.items;
 	    var file = items[0].getAsFile();
+        this.path = file.path;
+        this.showLoader = true;
         //alert(file.path);
-        this.$emit("filePath", file.path);
+        setTimeout(()=>{
+            this.showLoader =false; 
+            console.log(this.path);
+            this.$emit("filePath", this.path); 
+        }, 3000);
+        //this.$emit("filePath", file.path);
     }
             
 //            function(ev){

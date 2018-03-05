@@ -64,6 +64,21 @@ var ethToolkit = (function(){
 		return contract.methods.isOwner(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });
 	}
 
+	let getPrices = function(_hash, _address){
+		let hexHash = web3.utils.asciiToHex(_hash);
+		return contract.methods.getPrices(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });	
+	}
+
+	let getBought = function(_hash, _address){
+		let hexHash = web3.utils.asciiToHex(_hash);
+		return contract.methods.getBought(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });	
+	}
+	let buyFile = function(_hash, _address, _value, _priceId){
+
+		let hexHash = web3.utils.asciiToHex(_hash);
+		let valueInWei = web3.utils.toWei(String(_value));
+		return contract.methods.buyFile(hexHash, _priceId).send({from: _address, gasPrice: '2000000000', gas: 5000000, value: valueInWei });	
+	}
 	let toWei = function(_value){
 		return web3.utils.toWei(String(_value));
 	}
@@ -107,10 +122,14 @@ var ethToolkit = (function(){
 		isOwner: isOwner,
 		toWei: toWei,
 		isValidAddress: isValidAddress,
+		isValidPrivateKey: isValidPrivateKey,
 		createRandomAccount: createRandomAccount,
 		createAccountFromPrivateKey: createAccountFromPrivateKey,
 		web3: web3,
-		getWeb3: getWeb3
+		getWeb3: getWeb3,
+		getPrices: getPrices,
+		getBought: getBought,
+		buyFile: buyFile
 	}
 })();
 
