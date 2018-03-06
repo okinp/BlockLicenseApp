@@ -13,7 +13,8 @@ var ethToolkit = (function(){
 
 
 	let init = function(_abi, _contractAddress ){
-		let provider = new Web3.providers.HttpProvider('http://localhost:7545');
+		let host = 'https://ropsten.infura.io/lgXbglxWKEZxvSTyGg7u';
+		let provider = new Web3.providers.HttpProvider(host);
 		web3 = new Web3(provider);
 		wallet = web3.eth.accounts.wallet.create(0, web3.utils.randomHex(32));
 		abi = _abi;
@@ -45,7 +46,7 @@ var ethToolkit = (function(){
 			let valueInWei = web3.utils.toWei(String(_valueInEth));
 			return	web3.eth.sendTransaction({		from: _fromAccountIndex,
 				    								to: _toPublicKey,
-				                                    gas: 22000,
+				                                    gas: 44000,
 				                                    value: valueInWei});
 	}
 
@@ -55,29 +56,29 @@ var ethToolkit = (function(){
         	return web3.utils.toWei(String(x.priceValue));
         });
 		let hexHash = web3.utils.asciiToHex(_hash);
-		return contract.methods.addFile(hexHash,pricesInWei).send({from: _address, gasPrice: '2000000000', gas: 5000000 });
+		return contract.methods.addFile(hexHash,pricesInWei).send({from: _address, gasPrice: '2000000000', gas: 180000 });
 	}
 
 	/* addFile: returns Promise */
 	let isOwner = function(_hash, _address){
 		let hexHash = web3.utils.asciiToHex(_hash);
-		return contract.methods.isOwner(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });
+		return contract.methods.isOwner(hexHash).call({from: _address, gasPrice: '2000000000', gas: 180000 });
 	}
 
 	let getPrices = function(_hash, _address){
 		let hexHash = web3.utils.asciiToHex(_hash);
-		return contract.methods.getPrices(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });	
+		return contract.methods.getPrices(hexHash).call({from: _address, gasPrice: '2000000000', gas: 180000 });	
 	}
 
 	let getBought = function(_hash, _address){
 		let hexHash = web3.utils.asciiToHex(_hash);
-		return contract.methods.getBought(hexHash).call({from: _address, gasPrice: '2000000000', gas: 5000000 });	
+		return contract.methods.getBought(hexHash).call({from: _address, gasPrice: '2000000000', gas: 180000 });	
 	}
 	let buyFile = function(_hash, _address, _value, _priceId){
 
 		let hexHash = web3.utils.asciiToHex(_hash);
 		let valueInWei = web3.utils.toWei(String(_value));
-		return contract.methods.buyFile(hexHash, _priceId).send({from: _address, gasPrice: '2000000000', gas: 5000000, value: valueInWei });	
+		return contract.methods.buyFile(hexHash, _priceId).send({from: _address, gasPrice: '2000000000', gas: 380000, value: valueInWei });	
 	}
 	let toWei = function(_value){
 		return web3.utils.toWei(String(_value));
