@@ -24,8 +24,8 @@ if ( false ){
 }
 
 var evm = require('./ethToolkit');
-let contractJson = require('../../build/contracts/Licenses.json');
-var json = require('./../../build/contracts/Licenses.json');
+let json = require('./Licenses.json');
+//var json = require('./../../build/contracts/Licenses.json');
 evm.init(json.abi, '0x1006eDa5E481eBb9B7A9F92A8281AF1370D7EAFC');
 //evm.init(json.abi, '0x345ca3e014aaf5dca488057592ee47305d9b3e10');
 var accts = store.getters['Wallet/accountObjects'];
