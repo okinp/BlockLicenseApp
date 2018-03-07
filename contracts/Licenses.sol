@@ -5,7 +5,7 @@ contract Licenses {
 	struct File {
 		address owner;
 		uint256[] prices;
-		mapping( address => uint8[]) buyers;
+		mapping( address => uint8[]) buyerss;
 	}
 
 	mapping( bytes16 => File) public store;
