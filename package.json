@@ -18,7 +18,7 @@
   },
   "build": {
     "productName": "blocklicenseapp",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "io.blocklicense.app",
     "directories": {
       "output": "build"
     },

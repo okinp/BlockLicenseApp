@@ -1,6 +1,16 @@
 pragma solidity ^0.4.18;
 
 contract Licenses {
+	event FileAdded {
+		address indexed _from,
+		bytes16 indexed _hash
+	};
+
+	event LicenseBought {
+		address indexed _buyer,
+		bytes16 indexed _hash,
+		uint8 indexed _priceId
+	};
 
 	struct File {
 		address owner;
@@ -15,6 +25,7 @@ contract Licenses {
 		File memory f = store[hash];
 		require ( f.owner == address(0) );
 		store[hash] = File(msg.sender, prices);
+		emit FileAdded(msg.sender, hash);
 		return hash;
 	}
 
@@ -25,6 +36,7 @@ contract Licenses {
 		require( priceId <= f.prices.length -1 );
 		require( f.prices[priceId] == msg.value);
 		store[hash].buyers[msg.sender].push(priceId);
+		emit LicenseBought(msg.sender, hash, priceId);
 		//f.buyers[msg.sender].push(priceId);
 	}
 
@@ -39,7 +51,6 @@ contract Licenses {
 	function isOwner(bytes16 hash) public view returns (bool)
 	{
 		File memory f = store[hash]; 
-		//require ( f.owner != address(0));
 		if ( f.owner == msg.sender){
 			return true;
 		}
