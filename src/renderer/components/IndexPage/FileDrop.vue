@@ -18,9 +18,6 @@
                     </div>
                     <p class="file-return"></p>
                 </form>                
-<!--                 <p class="browse">
-                    OR BROWSE HERE <i class="fa fa-folder-o"></i>
-                </p> -->
             <div id="loader">        
                 <v-progress-linear :indeterminate="true" v-if="showLoader"></v-progress-linear>
             </div>
@@ -106,9 +103,12 @@ export default {
     var browseFile = document.querySelector(".input-file");
     browseFile.onchange = (ev) => {
         ev.preventDefault();
-        var path = ev.path[0].files[0].path;
-        console.log(path)
-        this.$emit("filePath", path);
+        this.path = ev.path[0].files[0].path;
+        this.showLoader = true;
+        setTimeout(()=>{
+            this.showLoader =false; 
+            this.$emit("filePath", this.path); 
+        }, 3000);
     }
     var dropArea = document.getElementById('filedrop');
     // var that = this;
@@ -118,7 +118,6 @@ export default {
 	    var file = items[0].getAsFile();
         this.path = file.path;
         this.showLoader = true;
-        //alert(file.path);
         setTimeout(()=>{
             this.showLoader =false; 
             console.log(this.path);
