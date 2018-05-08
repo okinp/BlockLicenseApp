@@ -3,8 +3,6 @@ var ethToolkit = (function(){
 	const fs = require('fs');
 	const Web3 = require('web3');
     let util = require('ethereumjs-util');
-    
-
     let web3 = null;
     let wallet = null;
 	let contractAddress = null;
@@ -89,8 +87,6 @@ var ethToolkit = (function(){
 	}
 
 	let isValidPrivateKey = function(_key){
-		// let pk = Buffer.from(_key,'hex');
-		// return util.isValidPrivate(pk);
 		return  util.isValidPrivate(Buffer.from(_key,'hex'));
 	}
 

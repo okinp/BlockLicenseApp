@@ -6,7 +6,6 @@
 </template>
 
 <script>
-  // test.default.utils();
   import HeaderNav from './components/Common/HeaderNav'
   export default {
     name: 'blocklicenseapp',
@@ -27,11 +26,20 @@
           })
       },
       getBalances: function(){
-        let numAccounts = this.$store.getters['Wallet/accounts'].length;
-        for ( var i=0; i < numAccounts; i++)
-        {
-          this.getBalanceEth(i);
-        }
+        let accounts = this.$store.getters['Wallet/accounts'];
+        accounts.forEach((account,idx) => {
+          this.$evm.getBalanceFromAccount(account)
+          .then( (res)=>{
+            let data = {
+              index: idx,
+              balance: this.$evm.convertToEth(res)
+            }
+            this.$store.commit('Wallet/SET_ETH_BALANCE', data);
+          })
+          .catch( (err)=>{
+            console.log(err.message);
+          })      
+        });
       },
     },
     mounted: function(){

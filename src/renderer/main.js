@@ -18,26 +18,23 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-if ( false ){
-    //store.commit('Wallet/CLEAR_WALLET')
+let clearLocalStorage = false;
+if ( clearLocalStorage ){
+    store.commit('Wallet/CLEAR_WALLET')
     store.commit('Licenses/CLEAR_LICENSES')
 }
 
-var evm = require('./ethToolkit');
+let evm = require('./ethToolkit');
 let json = require('./Licenses.json');
-//var json = require('./../../build/contracts/Licenses.json');
 evm.init(json.abi, '0x1006eDa5E481eBb9B7A9F92A8281AF1370D7EAFC');
-//evm.init(json.abi, '0x345ca3e014aaf5dca488057592ee47305d9b3e10');
-var accts = store.getters['Wallet/accountObjects'];
-var sz = accts.length;
+let accts = store.getters['Wallet/accountObjects'];
+let sz = accts.length;
+accts.forEach(el => {
+  evm.addAccount(el);
+});
 
-
-for (var i=0; i<sz; i++){
-    evm.addAccount(accts[i]);
-}
 Vue.prototype.$evm = evm;
 
-//let axios = require('axios');
 let price_usd =1000;
 
 axios.get('https://api.coinmarketcap.com/v1/ticker/?limit=5')

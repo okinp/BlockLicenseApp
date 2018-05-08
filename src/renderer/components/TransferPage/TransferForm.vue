@@ -21,7 +21,7 @@
                     <v-btn class="app-btn" v-on:click="showConfirmationDialog" flat v-bind:class="{ 'btn--disabled': !valid}">TRANSFER</v-btn>
                 </v-flex>
             </v-layout>
-        </v-container v-model>
+        </v-container>
         </v-form>
         <transfer-dialog  :shown="showDialog" :value="value" :address="publicKey"  @cancel="cancelDialog" @transfer="performTransfer"></transfer-dialog>
   </div>
@@ -109,9 +109,6 @@ export default {
     }
     .text-center > h1 {
         letter-spacing: normal;
-    }
-    #amount {
-      
     }
     #currency {
         position: relative;

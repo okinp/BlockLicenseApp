@@ -74,7 +74,7 @@ export default {
         validateName: (value)=>{
           let txt = '';
           let res = false;
-          if (value=='' || value==null)
+          if (value === '' || value === null)
           {
             txt = 'You need to supply a name';
           } else if (value.length < 6 ){
@@ -87,7 +87,7 @@ export default {
         validatePrivateKey: (value)=>{
             const ethUtil = require('ethereumjs-util');
             var isValid = null;
-            if (value===null){
+            if (value === null){
               this.valid = false;
             }  else {
               isValid = this.$evm.isValidPrivateKey(value);
