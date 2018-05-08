@@ -12,7 +12,7 @@ npm run dev
 npm run build
 ```
 ---
-UI & UX by [Yiannis Koutsoupas](john@goodfellas.gr) of [Goodfellas](http://goodfellas.gr/)
+UI & UX by [Yiannis Koutsoupas](mailto:john@goodfellas.gr) of [Goodfellas](http://goodfellas.gr/)
 
 
 ---
