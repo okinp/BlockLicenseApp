@@ -4,19 +4,11 @@
         <component  :is="getComponent"
                     :path="path" 
                     :selectedAccountIndex="selectedAccountIndex"
-                    
                     @close="closeNewLicenseEmited" 
                     @rdf="rdfEmitted"
                     @prices="pricesEmitted" 
                     @filePath="fileSelected"></component>
-        <save-dialog    :shown="showDialog" 
-                        :path="path" 
-                        :processingStage="currentStage"
-                        :actionA="xmpAction"
-                        :actionB="hashAction"
-                        :actionC="ethAction" 
-                        @cancel="closeDialogEmited"
-                        @process="applyLicense">Saving</save-dialog>
+
     </div>
 </template>
 <style scoped>
@@ -57,8 +49,6 @@
                             const rdfElement = doc.getElementsByTagName('rdf:RDF')[0];
                             const blocklicenseXM = doc.getElementsByTagName('block:creator')[0];
                             if (blocklicenseXM!=undefined ) {
-                                //console.log(rdfElement);
-                                //console.log('contains bl data');
                                 this.rdf = new serializer().serializeToString(rdfElement);
                                 var ob = JXON.stringToJs(this.rdf)['rdf:RDF']['rdf:Description'];
                                 var licenseObj = {
@@ -70,7 +60,6 @@
                                     licenseDescription: ob['block:license-description'],
                                     prices: []
                                 }
-                                console.log(licenseObj)
                                 var priceNames = ob['block:pricenames']['rdf:Bag']['rdf:li'];
                                 var priceValues = ob['block:prices']['rdf:Bag']['rdf:li'];
                                 if ( Array.isArray(priceNames) && Array.isArray(priceValues) )
@@ -83,16 +72,13 @@
                                             licenseObj.prices.push({name: priceNames[i], value: priceValues[i]});
                                         }
                                         this.licenseObj  = licenseObj;
-                                        console.log(this.licenseObj)
                                     } 
                                 } else {
                                     this.actionIndex = 1;
-                                    console.log('Not array');
                                     licenseObj.prices.push({name: priceNames, value: priceValues});
                                     this.licenseObj  = licenseObj;
                                 }
                             } else {
-                                console.log(rdfElement);
                                 this.actionIndex = 2;
                             }
                         }
@@ -111,50 +97,12 @@
                 this.showDialog = false;
             },
             rdfEmitted: function(data){
-                console.log('rdf emitted');
                 this.actionIndex = 0;
                 this.showDialog = true;
                 this.rdfData = data;
             },
             pricesEmitted: function(data){
                 this.prices = data;
-            },
-            resetStates: function(data){
-                this.xmpAction ='saving';
-                this.hashAction = 'saving';
-                this.ethAction = 'saving';
-                this.currentAction = 0;
-            },
-            applyLicense: function(){
-                this.currentStage = 0;
-                let accounts = this.$store.getters['Wallet/accounts'];
-                let address = accounts[this.selectedAccountIndex].accountObject.address;
-                this.resetStates();
-                this.xmpAction ="saving";
-                this.currentStage = 1;
-                console.log('apply license called');
-                xmpTools.writeAsync(this.path, this.rdfData)
-                .then((path)=>{
-                    this.currentStage = 2;
-                    this.actionIndex = 0;
-                    this.showLoader = false;
-                    this.xmpAction = 'done';
-                    const md5File = require('md5-file/promise')
-                    return md5File(path);
-                })
-                .then(hash=>{
-                    this.currentStage = 3;
-                    this.hashAction =  'done'; 
-                    return this.$evm.addFile(hash, this.prices, address);
-                })
-                .then((result)=>{
-                    console.log('eth result:' + result);
-                    this.ethAction =  'done';
-                })
-                .catch( e=>{
-                  console.log('error occured');
-                  console.log(e);  
-                })
             }
         },
         computed: {
@@ -172,13 +120,7 @@
                 actions: ['file-drop', 'display-license', 'new-license'],
                 licenseObj: null,
                 showLoader: true,
-                showDialog: false,
-                currentStage: 0,
-                xmpAction: 'saving',
-                hashAction: 'saving',
-                ethAction: 'saving',
-                hash:'',
-                prices: null
+
             }
         }
 	}

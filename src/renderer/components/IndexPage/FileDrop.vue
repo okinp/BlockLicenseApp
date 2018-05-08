@@ -18,9 +18,9 @@
                     </div>
                     <p class="file-return"></p>
                 </form>                
-<!--                 <p class="browse">
-                    OR BROWSE HERE <i class="fa fa-folder-o"></i>
-                </p> -->
+            <div id="loader">        
+                <v-progress-linear :indeterminate="true" v-if="showLoader"></v-progress-linear>
+            </div>
         </div>
     </div> 
 </template>
@@ -83,18 +83,32 @@
             margin-top: 40px;
             color: #D8DCE1;
         }
+        #loader {
+            min-height: 35px;
+            display: flex;
+            flex-direction: column;
+        }
     }
 </style>
 <script>
 export default {
   name: 'file-drop',
+  data: function(){
+    return {
+        path: '',
+        showLoader: false
+    }
+  },
   mounted: function(){
     var browseFile = document.querySelector(".input-file");
     browseFile.onchange = (ev) => {
         ev.preventDefault();
-        var path = ev.path[0].files[0].path;
-        console.log(path)
-        this.$emit("filePath", path);
+        this.path = ev.path[0].files[0].path;
+        this.showLoader = true;
+        setTimeout(()=>{
+            this.showLoader =false; 
+            this.$emit("filePath", this.path); 
+        }, 3000);
     }
     var dropArea = document.getElementById('filedrop');
     // var that = this;
@@ -102,8 +116,14 @@ export default {
         ev.preventDefault();
 	    var items = ev.dataTransfer.items;
 	    var file = items[0].getAsFile();
-        //alert(file.path);
-        this.$emit("filePath", file.path);
+        this.path = file.path;
+        this.showLoader = true;
+        setTimeout(()=>{
+            this.showLoader =false; 
+            console.log(this.path);
+            this.$emit("filePath", this.path); 
+        }, 3000);
+        //this.$emit("filePath", file.path);
     }
             
 //            function(ev){

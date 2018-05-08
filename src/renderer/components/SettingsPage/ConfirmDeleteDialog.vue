@@ -1,41 +1,62 @@
 <template>
-<div>
-    <v-container fluid id="account-list">
-        <v-layout row wrap>
-            <v-flex xs12 class="text-center">
-                <h1>Delete Account?</h1>
-            </v-flex>
-            <v-flex xs12 class="text-center">
-                <v-btn flat class="app-btn" v-on:click="confirmDelete">Delete</v-btn>
-            </v-flex>
-        	<v-flex xs12 class="text-center">
-            	<v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
-      		</v-flex>
-
-        </v-layout>
-    </v-container>
-</div>
+  <div class="bl-dialog">
+    <h1>Delete Account</h1>
+    <h1>"{{getWalletName()}}" ?</h1>
+    <button-bar :active="true" @confirm="deleteAccount" @cancel="cancelDialog" :applyText="'Delete'"></button-bar>
+  </div>
 </template>
 <script>
+import ButtonBar from '../Common/ButtonBar';
 export default {
 	name: 'confirm-delete-dialog',
-	methods: {
-      cancelDialog: function(){
-        this.$emit("cancel", true);
-      },
-      confirmDelete: function(){
-      	this.$emit("cancel", true);
-      	this.$emit("delete", true);
-      }
+  components: { ButtonBar },
+  props: ['accountIndex'],
+  methods: {
+    deleteAccount: function(){
+      this.$store.commit('Wallet/DELETE_ACCOUNT', this.idx );
+      this.$emit("hide", true);
     },
+    cancelDialog: function(){
+      this.$emit("hide", true);
+    },
+    getWalletName: function(){
+      return this.$store.getters['Wallet/nameAtIndex'](this.idx);
+    }
+  },
+  data: function(){
+    return {
+      idx: 0,
+    }
+  },
+  watch: {
+    accountIndex: function(now, before){
+      this.idx = now;
+    }
+  },
 }
 </script>
 <style lang="scss" scoped>
-	.app-btn {
-		background-color: #3857b9 !important;
-		color: white;
-	}
-	.cancel-btn {
-		color: #3857b9 !important;
-	}
+  .bl-dialog {
+    width: 100%;
+    height: 230px;
+    display: flex;
+    flex-direction: column;
+    h1,h2 {
+      text-align: center;
+      padding: 10px 0;
+      display: inline-block;
+    }
+    h1 {
+      emph {
+        font-weight:500;
+      }
+    }
+    .button-group {
+      margin-top: auto;
+    }
+  }
+  .dialog {
+    width: 50% !important;
+  }
+
 </style>

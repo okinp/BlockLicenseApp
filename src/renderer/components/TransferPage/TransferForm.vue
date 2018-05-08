@@ -6,12 +6,13 @@
                 <v-flex xs12 class="text-center">
                     <h1>Transfer</h1>
                 </v-flex>
-                <v-flex xs9 id="amount">
-                     <v-text-field name="input-1" label="Amount" id="testing1" v-model="value" :rules="[rules.validateValue]">
-                     </v-text-field>
-                </v-flex>
-                <v-flex xs3 id="currency">
-                  <p>ETH</p>
+
+                <v-flex xs12 id="amount">
+                  <div id="currency">
+                    <p>ETH</p>
+                  </div>
+                  <v-text-field name="input-1" label="Amount" id="testing1" v-model="value" :rules="[rules.validateValue]">
+                  </v-text-field>
                 </v-flex>
                 <v-flex xs12>
                     <v-text-field name="input-1" label="Recipient Account" id="testing" v-model="publicKey" :rules="[rules.validatePublicKey]"></v-text-field>
@@ -20,7 +21,7 @@
                     <v-btn class="app-btn" v-on:click="showConfirmationDialog" flat v-bind:class="{ 'btn--disabled': !valid}">TRANSFER</v-btn>
                 </v-flex>
             </v-layout>
-        </v-container v-model>
+        </v-container>
         </v-form>
         <transfer-dialog  :shown="showDialog" :value="value" :address="publicKey"  @cancel="cancelDialog" @transfer="performTransfer"></transfer-dialog>
   </div>
@@ -43,7 +44,6 @@ export default {
                     return 'Value cannot be empty';
                   }
                   var m = (/[\d]+(\.[\d]+)?/).exec(value);
-                  console.log();
                   if (m==null)
                   {
                     return 'Enter a number';
@@ -62,23 +62,7 @@ export default {
                   }
                 },
                 validatePublicKey: (value)=>{
-                    let isValid = this.$evm.isValidAddress;
-                    console.log(isValid);
-                    let res = isValid(value);
-                    console.log(res);
-                    // if (value== null )
-                    // {
-                    //   return true;
-                    // }
-                    // const ethUtil = require('ethereumjs-util');
-                    // var isValid = false;
-                    // try {
-                    //     isValid = ethUtil.isValidAddress(value);
-                    // }
-                    // catch(err) {
-                    //     isValid = false;
-                    // }
-                    return this.$evm.isValidAddress(value)? true:'Invalid Address'
+                  return this.$evm.isValidAddress(value)? true:'Invalid Address'
                 }
             }
         }
@@ -111,7 +95,6 @@ export default {
 <style lang="scss">
     .transferForm {
       width: 100%;
-      height: 400px;
       display: flex;
       flex-grow: 1;
       justify-content: center;
@@ -122,23 +105,22 @@ export default {
     }
     #account-form {
       width: 80%;
-      height: 621px
+      height: 420px
     }
     .text-center > h1 {
         letter-spacing: normal;
     }
-    #amount {
-        padding-right: 12px;
-    }
     #currency {
+        position: relative;
+        float: right;
+        top: 85px;
+        right: 0px;
+        width: 50px;
         padding-left: 12px;
         font-weight: 500;
         font-size: 16px;
-        align-items: center;
         line-height: 69px;
         color: #8F949D;
-        display: flex;
-        justify-content: flex-end;
     }
     .layout .app-btn {
         background-color: #3857B9 !important;

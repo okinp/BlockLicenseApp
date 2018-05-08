@@ -4,15 +4,6 @@
         <close-bar @close="cancelDialog"></close-bar>
         <v-container fluid id="saveDialog">
             <v-layout row wrap>
-                <v-flex xs12 class="text-center" v-if="processingStage==0">
-                    <h1>Apply license?</h1>
-                </v-flex>
-                <v-flex xs12 class="text-center" v-if="processingStage==0">
-                    <v-btn flat class="app-btn" v-on:click="confirmProcess">Confirm</v-btn>
-                </v-flex>
-              <v-flex xs12 class="text-center" v-if="processingStage==0">
-                  <v-btn flat class="cancel-btn" v-on:click="cancelDialog">Cancel</v-btn>
-              </v-flex>
               <v-flex xs12 id="messages" class="text-center" v-if="processing">
                   <process-message :action="actionA" :text="'Saving data to file'" v-if="processingStage>=1"></process-message>
                   <process-message :action="actionB" :text="'Calculating file ID'" v-if="processingStage>=2"></process-message>
@@ -49,6 +40,7 @@
 <style lang="scss" scoped>
 
   #saveDialog {
+    min-height: 250px;
 
   }
   #messages {

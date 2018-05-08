@@ -1,7 +1,7 @@
 <template>
 	<div class="price">
 	    <div class="description">
-	        <v-text-field label="Name" v-model="priceName" :rules="rules.priceDescription" :change="onNameChanged" required></v-text-field>
+	        <v-text-field label="Pricing Description" v-model="priceName" :rules="rules.priceDescription" :change="onNameChanged" required></v-text-field>
 	    </div>
 	    <div class="value">
 	        <v-text-field label="Value" v-model="priceValue" :rules="rules.priceValue" type="number" required></v-text-field>
@@ -21,7 +21,7 @@ export default {
 	data: function(){
 		return {
 	        rules: {
-	            priceDescription: [ (v)=> v.length > 8? true:"Price description must be at least 8 characters long"],
+	            priceDescription: [ (v)=> v.length > 8? true:"Pricing description must be at least 8 characters long"],
 	            priceValue: [ (v)=> v > 0 ?true:"Value > 0"]
 	        },
 	        // priceName: this.description,

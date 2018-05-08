@@ -17,12 +17,16 @@
             <v-btn class="app-btn" v-bind:class="{ 'btn--disabled': !accountData.primary}"  @click="makePrimary" flat title="Set account as primary">Primary</v-btn>
         </div>
         <div class="controls">
-            <a href="#" @click="deleteAccount" title="Delete account">
-                <i class="fa fa-close"></i>
-            </a>
-            <a href="#" @click="editAccount" title="Edit account">
-                <i class="fa fa-chevron-right"></i>
-            </a>
+            <div class="control-item">
+                <a href="#" @click="deleteAccount" title="Delete account">
+                    <i class="fa fa-close"></i>
+                </a>
+            </div>
+            <div class="control-item">
+                <a href="#" @click="editAccount" title="Edit account">
+                    <i class="fa fa-edit"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -70,6 +74,7 @@
             justify-content: flex-start;
             align-items: center;
             font-size: 18px;
+            min-width: 140px;
             & > p.amount {
                 width: 55%;
                 margin: 0;
@@ -87,18 +92,16 @@
             width: 35%;
             display: flex;
             align-items: center;
-            .app-btn {
-                box-sizing: border-box;
+            .btn.app-btn {
                 height: 27px;
                 font-size: 12px;
-                //background-color: #3857b9;
                 background-color: #3857B9 !important;
-                //background-color: #3857B9;
-                color: white;
+                .btn__content {
+                    padding: 0 !important;
+                }
                 pointer-events: none;
                 &.btn--disabled {
-                    background-color: #d6dde4 !important;
-                    color: white  !important;
+                    opacity: 0.15;
                     pointer-events: all;
                 }
             }
@@ -107,13 +110,23 @@
             width: 40%;
             display: flex;
             flex-direction: column;
-            a {
+            justify-content: flex-end;
+            align-items: flex-end;
+            .control-item {
+                display: flex;
                 height: 50%;
-                font-size: 14px;
-                i {
-                    float: right;
-                    color: #d6dde4;
-                    line-height: 28px;
+                width: 28px;
+                align-items: center;
+                justify-content: center;
+                a {
+                    display: inline-block;
+                    height: 100%;
+                    font-size: 16px;
+                    i {
+                        float: right;
+                        color: #d6dde4;
+                        line-height: 28px;
+                    }
                 }
             }
         }
@@ -128,14 +141,14 @@ export default {
     methods: {
         editAccount: function () {
             this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
-            this.$emit("editAccount", true);
             this.$emit("accountIndex", this.accountIndex);
+            this.$emit("editAccountPressed", true);
+
         },
         deleteAccount: function(){
-            //this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
-            //this.$store.commit('Wallet/DELETE_ACCOUNT', this.accountIndex);
-            this.$emit("deleteAccount", true);
+            this.$store.commit('Wallet/SET_EDIT_ACCOUNT', this.accountIndex);
             this.$emit("accountIndex", this.accountIndex);
+            this.$emit("deleteAccountPressed", true);
         },
         makePrimary: function(){
             this.$store.commit('Wallet/SET_PRIMARY_ACCOUNT', this.accountIndex);
