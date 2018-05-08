@@ -5,11 +5,11 @@
 #### Build Setup
 ``` bash
 # install dependencies
-npm install
+yarn
 # serve with hot reload at localhost:9080
-npm run dev
+yarn dev
 # build electron application for production
-npm run build
+yarn build
 ```
 ---
 UI & UX by [Yiannis Koutsoupas](mailto:john@goodfellas.gr) of [Goodfellas](http://goodfellas.gr/)
